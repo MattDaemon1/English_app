@@ -1,0 +1,305 @@
+/* 🎨 Charte Graphique EnglishMaster - Version Finale */
+
+/* Import des polices principales */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap');
+
+/* Variables CSS pour la nouvelle charte */
+:root {
+    /* Couleurs principales EnglishMaster */
+    --bg-cream: #FAF8F6;
+    --text-primary: #1E293B;
+    --text-secondary: #334155;
+    --text-tertiary: #64748B;
+    --text-link: #2563EB;
+
+    /* Boutons */
+    --btn-primary: #2563EB;
+    --btn-primary-hover: #1E40AF;
+    --btn-secondary: #E2E8F0;
+    --btn-secondary-hover: #CBD5E1;
+
+    /* Indicateurs de score */
+    --score-excellent: #10B981;
+    /* 7-10 */
+    --score-moyen: #F59E0B;
+    /* 4-6 */
+    --score-faible: #EF4444;
+    /* 0-3 */
+
+    /* Polices */
+    --font-primary: 'Inter', sans-serif;
+    --font-heading: 'Poppins', sans-serif;
+
+    /* Tailles de base */
+    --text-base: 16px;
+    --text-lg: 18px;
+    --text-xl: 20px;
+    --text-2xl: 24px;
+    --text-3xl: 30px;
+    --text-4xl: 36px;
+}
+
+/* ✨ Transitions globales douces */
+* {
+    transition: all 0.2s ease-in-out;
+}
+
+/* 🔤 Système typographique EnglishMaster */
+
+/* Corps de base */
+body {
+    font-family: var(--font-primary);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    background-color: var(--bg-cream);
+    line-height: 1.6;
+}
+
+/* Titres avec Poppins */
+h1,
+.title-main {
+    font-family: var(--font-heading);
+    font-size: clamp(28px, 5vw, 36px);
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+h2,
+.subtitle {
+    font-family: var(--font-primary);
+    font-size: clamp(20px, 4vw, 24px);
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+h3,
+.question-text {
+    font-family: var(--font-primary);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+/* Texte de boutons et réponses */
+.button-text,
+.answer-text {
+    font-family: var(--font-primary);
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* Texte secondaire */
+.text-secondary,
+.note-text {
+    font-family: var(--font-primary);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+}
+
+/* Liens */
+a,
+.text-link {
+    color: var(--text-link);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover,
+.text-link:hover {
+    color: var(--btn-primary-hover);
+    text-decoration: underline;
+}
+
+/* 🟦 Boutons EnglishMaster */
+.btn-englishmaster {
+    font-family: var(--font-primary);
+    font-size: var(--text-base);
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 10px 16px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--btn-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--btn-primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary {
+    background-color: var(--btn-secondary);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--btn-secondary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 🧩 Cartes EnglishMaster */
+.card-englishmaster {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-englishmaster:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* 🟥 Indicateurs de score */
+.score-faible {
+    background-color: var(--score-faible);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.score-moyen {
+    background-color: var(--score-moyen);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.score-excellent {
+    background-color: var(--score-excellent);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Inputs et formulaires */
+.input-englishmaster {
+    font-family: var(--font-primary);
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+}
+
+.input-englishmaster:focus {
+    outline: none;
+    border-color: var(--btn-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Mode sombre - adapte automatiquement */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-cream: #1F2937;
+        --text-primary: #F9FAFB;
+        --text-secondary: #D1D5DB;
+        --text-tertiary: #9CA3AF;
+        --text-link: #60A5FA;
+    }
+
+    .card-englishmaster {
+        background-color: #374151;
+        border-color: #4B5563;
+    }
+
+    .input-englishmaster {
+        background-color: #374151;
+        border-color: #4B5563;
+        color: #F9FAFB;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .btn-englishmaster {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+
+    .card-englishmaster {
+        padding: 16px;
+    }
+
+    h1,
+    .title-main {
+        font-size: 28px;
+    }
+
+    h2,
+    .subtitle {
+        font-size: 20px;
+    }
+}
+
+/* Animations et micro-interactions */
+.animate-bounce-in {
+    animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

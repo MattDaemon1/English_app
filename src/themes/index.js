@@ -3,24 +3,57 @@ import { useState } from 'react';
 // Palettes de couleurs disponibles
 export const themes = {
     classic: {
-        name: "🎨 Classique (Gris)",
-        background: "bg-gray-100",
-        primary: "bg-gray-600 hover:bg-gray-700",
-        secondary: "bg-gray-300 hover:bg-gray-400",
-        text: "text-black",
-        textSecondary: "text-gray-700",
-        card: "bg-white border border-gray-300",
-        badge: "bg-gray-600 text-white",
-        badgeOutline: "border-gray-600 text-black",
-        button: "bg-gray-600 hover:bg-gray-700 text-white",
-        buttonSecondary: "bg-gray-300 hover:bg-gray-400 text-black border border-gray-400",
-        buttonHover: "hover:bg-gray-700",
-        buttonSecondaryHover: "hover:bg-gray-400",
-        input: "bg-white border-gray-400 text-black focus:border-gray-600",
-        border: "border-gray-400",
-        cardBackground: "bg-white border-gray-300",
-        cardSecondary: "bg-gray-200",
-        accent: "text-black"
+        name: "� EnglishMaster",
+        // Fond crème doux pour les yeux
+        background: "bg-[#FAF8F6]",
+
+        // Système de couleurs texte selon votre charte
+        text: "text-[#1E293B]", // Gris ardoise foncé, très lisible
+        textSecondary: "text-[#334155]", // Un peu plus doux que le principal  
+        textTertiary: "text-[#64748B]", // Pour détails, commentaires
+        textLink: "text-[#2563EB]", // Bleu modéré pour liens
+
+        // Boutons principaux - Bleu doux avec hover
+        primary: "bg-[#2563EB] hover:bg-[#1E40AF]",
+        button: "bg-[#2563EB] hover:bg-[#1E40AF] text-white rounded-[10px] font-semibold text-base shadow-[0_2px_6px_rgba(0,0,0,0.08)] transition-all duration-200",
+
+        // Boutons secondaires - Gris clair bleuté
+        secondary: "bg-[#E2E8F0] hover:bg-[#CBD5E1]",
+        buttonSecondary: "bg-[#E2E8F0] hover:bg-[#CBD5E1] text-[#1E293B] rounded-[10px] font-semibold text-base shadow-[0_2px_6px_rgba(0,0,0,0.08)] transition-all duration-200",
+
+        // Cartes et zones - Blanc avec bordure douce
+        card: "bg-white border border-[#E5E7EB] rounded-[12px] shadow-[0_1px_4px_rgba(0,0,0,0.05)]",
+        cardBackground: "bg-white border border-[#E5E7EB] rounded-[12px] shadow-[0_1px_4px_rgba(0,0,0,0.05)]",
+        cardSecondary: "bg-[#F8FAFC] border border-[#E5E7EB] rounded-[12px]",
+
+        // Indicateurs de score selon votre système
+        scoreExcellent: "bg-[#10B981] text-white", // 7-10 (vert)
+        scoreMoyen: "bg-[#F59E0B] text-white",     // 4-6 (orange)
+        scoreFaible: "bg-[#EF4444] text-white",    // 0-3 (rouge)
+
+        // États et feedback
+        success: "text-[#10B981] bg-[#ECFDF5] border-[#10B981]",
+        warning: "text-[#F59E0B] bg-[#FFFBEB] border-[#F59E0B]",
+        error: "text-[#EF4444] bg-[#FEF2F2] border-[#EF4444]",
+
+        // Badges
+        badge: "bg-[#2563EB] text-white rounded-lg",
+        badgeSuccess: "bg-[#10B981] text-white rounded-lg",
+        badgeWarning: "bg-[#F59E0B] text-white rounded-lg",
+        badgeError: "bg-[#EF4444] text-white rounded-lg",
+        badgeOutline: "border-[#2563EB] text-[#2563EB] bg-white",
+
+        // Inputs et formulaires
+        input: "bg-white border-[#E5E7EB] text-[#1E293B] focus:border-[#2563EB] focus:ring-[#2563EB] rounded-[10px] transition-all duration-200",
+
+        // Bordures et séparateurs
+        border: "border-[#E5E7EB]",
+        borderStrong: "border-[#D1D5DB]",
+
+        // Classes utilitaires
+        buttonHover: "hover:bg-[#1E40AF]",
+        buttonSecondaryHover: "hover:bg-[#CBD5E1]",
+        accent: "text-[#2563EB]"
     },
     ocean: {
         name: "🌊 Océan (Bleu)",
@@ -149,23 +182,51 @@ export const themes = {
     },
     dark: {
         name: "🌙 Sombre",
-        background: "bg-gray-900", // #18181B selon votre charte
-        primary: "bg-blue-500 hover:bg-blue-400", // Plus saturé en mode sombre
-        secondary: "bg-emerald-500 hover:bg-emerald-400",
-        text: "text-gray-100", // #F4F4F5
-        textSecondary: "text-gray-400",
-        card: "bg-gray-800 border border-gray-700", // #27272A
-        badge: "bg-blue-500 text-white",
-        badgeOutline: "border-blue-400 text-blue-300",
-        button: "bg-blue-500 hover:bg-blue-400 text-white rounded-xl",
-        buttonSecondary: "bg-gray-800 hover:bg-gray-700 text-gray-100 border border-gray-600 rounded-xl",
-        buttonHover: "hover:bg-blue-400",
-        buttonSecondaryHover: "hover:bg-gray-700",
-        input: "bg-gray-800 border-gray-600 text-gray-100 focus:border-blue-400 rounded-xl",
-        border: "border-gray-700",
-        cardBackground: "bg-gray-800 border border-gray-700 rounded-xl shadow-lg",
-        cardSecondary: "bg-gray-900 border border-gray-700",
-        accent: "text-blue-400"
+        background: "bg-[#1F2937]", // Mode sombre basé sur votre charte
+        primary: "bg-[#2563EB] hover:bg-[#1E40AF]", // Même bleu mais plus saturé
+        secondary: "bg-[#374151] hover:bg-[#4B5563]",
+        text: "text-[#F9FAFB]", // Texte blanc cassé pour mode sombre
+        textSecondary: "text-[#D1D5DB]", // Gris clair pour le secondaire
+        textTertiary: "text-[#9CA3AF]", // Plus sombre pour détails
+        textLink: "text-[#60A5FA]", // Bleu plus clair pour liens
+
+        // Boutons adaptés au mode sombre
+        button: "bg-[#2563EB] hover:bg-[#1E40AF] text-white rounded-[10px] font-semibold text-base shadow-[0_2px_6px_rgba(0,0,0,0.3)] transition-all duration-200",
+        buttonSecondary: "bg-[#374151] hover:bg-[#4B5563] text-[#F9FAFB] rounded-[10px] font-semibold text-base shadow-[0_2px_6px_rgba(0,0,0,0.3)] transition-all duration-200",
+
+        // Cartes adaptées
+        card: "bg-[#374151] border border-[#4B5563] rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.2)]",
+        cardBackground: "bg-[#374151] border border-[#4B5563] rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.2)]",
+        cardSecondary: "bg-[#1F2937] border border-[#374151] rounded-[12px]",
+
+        // Indicateurs de score (mêmes couleurs mais adaptées)
+        scoreExcellent: "bg-[#10B981] text-white",
+        scoreMoyen: "bg-[#F59E0B] text-white",
+        scoreFaible: "bg-[#EF4444] text-white",
+
+        // États pour mode sombre
+        success: "text-[#34D399] bg-[#064E3B] border-[#10B981]",
+        warning: "text-[#FBBF24] bg-[#451A03] border-[#F59E0B]",
+        error: "text-[#F87171] bg-[#450A0A] border-[#EF4444]",
+
+        // Badges pour mode sombre
+        badge: "bg-[#2563EB] text-white rounded-lg",
+        badgeSuccess: "bg-[#10B981] text-white rounded-lg",
+        badgeWarning: "bg-[#F59E0B] text-white rounded-lg",
+        badgeError: "bg-[#EF4444] text-white rounded-lg",
+        badgeOutline: "border-[#60A5FA] text-[#60A5FA] bg-[#1F2937]",
+
+        // Inputs pour mode sombre
+        input: "bg-[#374151] border-[#4B5563] text-[#F9FAFB] focus:border-[#60A5FA] focus:ring-[#60A5FA] rounded-[10px] transition-all duration-200",
+
+        // Bordures
+        border: "border-[#4B5563]",
+        borderStrong: "border-[#6B7280]",
+
+        // Classes utilitaires
+        buttonHover: "hover:bg-[#1E40AF]",
+        buttonSecondaryHover: "hover:bg-[#4B5563]",
+        accent: "text-[#60A5FA]"
     }
 }
 
@@ -221,11 +282,17 @@ export const getThemeClasses = (theme, type, isActive = false, variant = 'primar
             return `${theme.error} px-3 py-1 text-sm font-medium rounded-lg`;
 
         case 'score-indicator':
-            // Système de couleurs pour les scores selon la charte
-            if (variant === 'low') return `${theme.error} px-4 py-2 rounded-xl font-bold text-lg`; // 0-4/10
-            if (variant === 'medium') return `${theme.warning} px-4 py-2 rounded-xl font-bold text-lg`; // 5-7/10
-            if (variant === 'high') return `${theme.success} px-4 py-2 rounded-xl font-bold text-lg`; // 8-10/10
+            // Système de couleurs pour les scores selon votre charte EnglishMaster
+            if (variant === 'faible' || variant === 'low') return `${theme.scoreFaible} px-4 py-2 rounded-xl font-bold text-lg`; // 0-3/10
+            if (variant === 'moyen' || variant === 'medium') return `${theme.scoreMoyen} px-4 py-2 rounded-xl font-bold text-lg`; // 4-6/10
+            if (variant === 'excellent' || variant === 'high') return `${theme.scoreExcellent} px-4 py-2 rounded-xl font-bold text-lg`; // 7-10/10
             return `${theme.badge} px-4 py-2 rounded-xl font-bold text-lg`;
+
+        case 'badge-score':
+            if (variant === 'faible') return `${theme.scoreFaible} px-3 py-1 text-sm font-medium rounded-lg`;
+            if (variant === 'moyen') return `${theme.scoreMoyen} px-3 py-1 text-sm font-medium rounded-lg`;
+            if (variant === 'excellent') return `${theme.scoreExcellent} px-3 py-1 text-sm font-medium rounded-lg`;
+            return `${theme.badge} px-3 py-1 text-sm font-medium rounded-lg`;
 
         default:
             return '';
