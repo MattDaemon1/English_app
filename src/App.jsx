@@ -12,7 +12,6 @@ function App() {
     // États globaux
     const [selectedDifficulty, setSelectedDifficulty] = useState('all')
     const [selectedTheme, setSelectedTheme] = useState('classic')
-    const [mode, setMode] = useState('flashcard') // 'flashcard' ou 'quiz'
 
     // Hooks personnalisés
     const {
@@ -26,7 +25,7 @@ function App() {
         handlePrevious,
         toggleAnswer,
         handleKnowAnswer
-    } = useWords(selectedDifficulty, mode)
+    } = useWords(selectedDifficulty, 'flashcard') // Toujours en mode flashcard pour useWords
 
     const {
         isQuizMode,
@@ -48,8 +47,7 @@ function App() {
     // Gestion du changement de difficulté et mode
 
     const handleStartQuiz = () => {
-        setMode('quiz')
-        startQuiz()
+        startQuiz() // Plus besoin de setMode
     }
 
     const handleDifficultyChange = (difficulty) => {
@@ -67,8 +65,7 @@ function App() {
     }
 
     const handleBackToFlashcards = () => {
-        setMode('flashcard')
-        exitQuiz()
+        exitQuiz() // Plus besoin de setMode
     }
 
     if (loading) {
@@ -139,8 +136,7 @@ function App() {
                     <div className="flex justify-center gap-2 mb-4">
                         <button
                             onClick={() => {
-                                setMode('flashcard')
-                                exitQuiz()
+                                exitQuiz() // Plus besoin de setMode
                             }}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', !isQuizMode)
                                 }`}
