@@ -1,350 +1,74 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Badge } from './components/ui/badge.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card.jsx'
-import { wordsData } from './data/words.js'
-
-// Palettes de couleurs disponibles
-const themes = {
-    classic: {
-        name: "🎨 Classique (Gris)",
-        background: "bg-white",
-        primary: "bg-gray-800 hover:bg-gray-700",
-        secondary: "bg-gray-200 hover:bg-gray-300",
-        text: "text-gray-900",
-        textSecondary: "text-gray-600",
-        card: "border-gray-200",
-        badge: "bg-gray-800 text-white",
-        badgeOutline: "border-gray-600 text-gray-800"
-    },
-    ocean: {
-        name: "🌊 Océan (Bleu)",
-        background: "bg-blue-50",
-        primary: "bg-blue-600 hover:bg-blue-700",
-        secondary: "bg-blue-100 hover:bg-blue-200",
-        text: "text-blue-900",
-        textSecondary: "text-blue-700",
-        card: "border-blue-200",
-        badge: "bg-blue-600 text-white",
-        badgeOutline: "border-blue-600 text-blue-800"
-    },
-    forest: {
-        name: "🌲 Forêt (Vert)",
-        background: "bg-green-50",
-        primary: "bg-green-700 hover:bg-green-800",
-        secondary: "bg-green-100 hover:bg-green-200",
-        text: "text-green-900",
-        textSecondary: "text-green-700",
-        card: "border-green-200",
-        badge: "bg-green-700 text-white",
-        badgeOutline: "border-green-700 text-green-800"
-    },
-    sunset: {
-        name: "🌅 Coucher (Orange)",
-        background: "bg-orange-50",
-        primary: "bg-orange-600 hover:bg-orange-700",
-        secondary: "bg-orange-100 hover:bg-orange-200",
-        text: "text-orange-900",
-        textSecondary: "text-orange-700",
-        card: "border-orange-200 bg-white",
-        badge: "bg-orange-600 text-white",
-        badgeOutline: "border-orange-600 text-orange-800"
-    },
-    purple: {
-        name: "💜 Mystique (Violet)",
-        background: "bg-purple-50",
-        primary: "bg-purple-600 hover:bg-purple-700",
-        secondary: "bg-purple-100 hover:bg-purple-200",
-        text: "text-purple-900",
-        textSecondary: "text-purple-700",
-        card: "border-purple-200",
-        badge: "bg-purple-600 text-white",
-        badgeOutline: "border-purple-600 text-purple-800"
-    },
-    dark: {
-        name: "🌙 Sombre",
-        background: "bg-gray-900",
-        primary: "bg-gray-600 hover:bg-gray-500",
-        secondary: "bg-gray-700 hover:bg-gray-600",
-        text: "text-white",
-        textSecondary: "text-gray-300",
-        card: "border-gray-600 bg-gray-800",
-        badge: "bg-gray-600 text-white",
-        badgeOutline: "border-gray-400 text-gray-200"
-    }
-}
-
-// Fonction utilitaire pour appliquer les classes de thème
-const getThemeClasses = (theme, type, isActive = false) => {
-    switch (type) {
-        case 'button-primary':
-            return isActive
-                ? `${theme.primary} text-white`
-                : `${theme.secondary} ${theme.text}`;
-        case 'button-secondary':
-            return `${theme.secondary} ${theme.text}`;
-        case 'button-primary-solid':
-            return `${theme.primary} text-white`;
-        default:
-            return '';
-    }
-}
-
-// Service simulé pour la transition vers SQLite
-class MockWordService {
-    constructor() {
-        this.words = wordsData;
-        this.progress = new Map(); // Simuler la progression en mémoire
-    }
-
-    async getWords(options = {}) {
-        let filteredWords = [...this.words]; // Copie pour éviter de modifier l'original
-
-        if (options.difficulty) {
-            filteredWords = filteredWords.filter(word => word.difficulty === options.difficulty);
-        }
-
-        if (options.category) {
-            filteredWords = filteredWords.filter(word => word.category === options.category);
-        }
-
-        if (options.search) {
-            filteredWords = filteredWords.filter(word =>
-                word.word.toLowerCase().includes(options.search.toLowerCase()) ||
-                word.translation.toLowerCase().includes(options.search.toLowerCase())
-            );
-        }
-
-        // Mélanger les mots dans le désordre
-        for (let i = filteredWords.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [filteredWords[i], filteredWords[j]] = [filteredWords[j], filteredWords[i]];
-        }
-
-        const start = options.offset || 0;
-        const end = start + (options.limit || 50);
-
-        return filteredWords.slice(start, end);
-    }
-
-    async getQuizWords(difficulty, count = 10) {
-        let filteredWords = [...this.words];
-
-        if (difficulty && difficulty !== 'all') {
-            filteredWords = filteredWords.filter(word => word.difficulty === difficulty);
-        }
-
-        // Mélanger les mots
-        for (let i = filteredWords.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [filteredWords[i], filteredWords[j]] = [filteredWords[j], filteredWords[i]];
-        }
-
-        return filteredWords.slice(0, Math.min(count, filteredWords.length));
-    }
-
-    generateQuizOptions(correctWord, allWords, count = 4) {
-        // Prendre des mots aléatoires différents du mot correct
-        const otherWords = allWords.filter(w => w.id !== correctWord.id);
-        const shuffledOthers = [...otherWords];
-
-        for (let i = shuffledOthers.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffledOthers[i], shuffledOthers[j]] = [shuffledOthers[j], shuffledOthers[i]];
-        }
-
-        const options = [correctWord, ...shuffledOthers.slice(0, count - 1)];
-
-        // Mélanger les options
-        for (let i = options.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [options[i], options[j]] = [options[j], options[i]];
-        }
-
-        return options;
-    }
-
-    async getWordsCount(filters = {}) {
-        let filteredWords = this.words;
-
-        if (filters.difficulty) {
-            filteredWords = filteredWords.filter(word => word.difficulty === filters.difficulty);
-        }
-
-        return filteredWords.length;
-    }
-
-    async getProgressStats() {
-        const totalStudied = this.progress.size;
-        const learned = Array.from(this.progress.values()).filter(p => p.learned).length;
-        const totalAttempts = Array.from(this.progress.values()).reduce((sum, p) => sum + p.attempts, 0);
-        const correctAnswers = Array.from(this.progress.values()).reduce((sum, p) => sum + p.correct, 0);
-
-        return {
-            total_words_studied: totalStudied,
-            words_learned: learned,
-            success_rate: totalAttempts > 0 ? correctAnswers / totalAttempts : 0,
-            mastered_words: Array.from(this.progress.values()).filter(p => p.mastery >= 4).length
-        };
-    }
-
-    async recordAnswer(wordId, isCorrect) {
-        const current = this.progress.get(wordId) || { attempts: 0, correct: 0, learned: false, mastery: 0 };
-        current.attempts++;
-        if (isCorrect) current.correct++;
-        current.mastery = Math.min(5, current.mastery + (isCorrect ? 1 : -1));
-        current.learned = current.mastery >= 3;
-        this.progress.set(wordId, current);
-    }
-}
+import { themes, getThemeClasses } from './themes/index.js'
+import { useWords } from './hooks/useWords.js'
+import { useQuiz } from './hooks/useQuiz.js'
+import { QuizComponent } from './components/Quiz/QuizComponent.jsx'
+import { FlashcardComponent } from './components/Flashcard/FlashcardComponent.jsx'
+import { AppHeader } from './components/AppHeader/AppHeader.jsx'
 
 function App() {
-    // États pour la gestion des mots et de l'application
-    const [words, setWords] = useState([])
-    const [currentWordIndex, setCurrentWordIndex] = useState(0)
-    const [loading, setLoading] = useState(true)
-    const [totalWords, setTotalWords] = useState(0)
+    // États globaux
     const [selectedDifficulty, setSelectedDifficulty] = useState('all')
-    const [showAnswer, setShowAnswer] = useState(true) // Mode flashcard
     const [selectedTheme, setSelectedTheme] = useState('classic')
-
-    // États pour le mode quiz
     const [mode, setMode] = useState('flashcard') // 'flashcard' ou 'quiz'
-    const [quizWords, setQuizWords] = useState([])
-    const [currentQuizIndex, setCurrentQuizIndex] = useState(0)
-    const [quizOptions, setQuizOptions] = useState([])
-    const [selectedAnswer, setSelectedAnswer] = useState(null)
-    const [quizScore, setQuizScore] = useState(0)
-    const [quizCompleted, setQuizCompleted] = useState(false)
-    const [userAnswers, setUserAnswers] = useState([])
 
-    const wordService = new MockWordService()
-    const currentWord = words[currentWordIndex]
-    const currentQuizWord = quizWords[currentQuizIndex]
+    // Hooks personnalisés
+    const {
+        words,
+        currentWord,
+        currentWordIndex,
+        loading,
+        totalWords,
+        showAnswer,
+        handleNext,
+        handlePrevious,
+        toggleAnswer,
+        handleKnowAnswer
+    } = useWords(selectedDifficulty, mode)
+
+    const {
+        isQuizMode,
+        currentQuizWord,
+        currentQuizIndex,
+        selectedAnswer,
+        score: quizScore,
+        quizFinished: quizCompleted,
+        startQuiz,
+        selectAnswer,
+        submitAnswer,
+        nextQuestion,
+        restartQuiz,
+        exitQuiz
+    } = useQuiz(selectedDifficulty)
+
     const theme = themes[selectedTheme] // Thème actuel
 
-    // Charger les mots depuis le service
-    useEffect(() => {
-        if (mode === 'flashcard') {
-            loadWords()
-        }
-    }, [selectedDifficulty, mode])
+    // Gestion du changement de difficulté et mode
 
-    const loadWords = async () => {
-        setLoading(true)
-        try {
-            const options = {
-                limit: 50,
-                offset: 0,
-                difficulty: selectedDifficulty === 'all' ? null : selectedDifficulty
-            }
-
-            const wordsData = await wordService.getWords(options)
-            const count = await wordService.getWordsCount({
-                difficulty: selectedDifficulty === 'all' ? null : selectedDifficulty
-            })
-
-            setWords(wordsData)
-            setTotalWords(count)
-            setCurrentWordIndex(0)
-        } catch (error) {
-            console.error('Erreur lors du chargement des mots:', error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const startQuiz = async () => {
-        setLoading(true)
+    const handleStartQuiz = () => {
         setMode('quiz')
-        setQuizCompleted(false)
-        setQuizScore(0)
-        setCurrentQuizIndex(0)
-        setUserAnswers([])
-
-        try {
-            const quizWordsData = await wordService.getQuizWords(selectedDifficulty, 10)
-            setQuizWords(quizWordsData)
-
-            if (quizWordsData.length > 0) {
-                generateQuizQuestion(quizWordsData, 0)
-            }
-        } catch (error) {
-            console.error('Erreur lors du démarrage du quiz:', error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const generateQuizQuestion = async (allQuizWords, questionIndex) => {
-        const currentWord = allQuizWords[questionIndex]
-        const allWords = await wordService.getWords({ limit: 100 })
-        const options = wordService.generateQuizOptions(currentWord, allWords, 4)
-        setQuizOptions(options)
-        setSelectedAnswer(null)
-    }
-
-    const handleNext = () => {
-        if (currentWordIndex < words.length - 1) {
-            setCurrentWordIndex(currentWordIndex + 1)
-            setShowAnswer(true)
-        }
-    }
-
-    const handlePrevious = () => {
-        if (currentWordIndex > 0) {
-            setCurrentWordIndex(currentWordIndex - 1)
-            setShowAnswer(true)
-        }
+        startQuiz()
     }
 
     const handleDifficultyChange = (difficulty) => {
         setSelectedDifficulty(difficulty)
     }
 
-    const toggleAnswer = () => {
-        setShowAnswer(!showAnswer)
-    }
-
-    const handleKnowAnswer = async (knows) => {
-        handleNext()
-    }
-
-    const handleQuizAnswer = (selectedOption) => {
-        setSelectedAnswer(selectedOption)
-
-        const isCorrect = selectedOption.id === currentQuizWord.id
-        const newAnswer = {
-            question: currentQuizWord,
-            selectedAnswer: selectedOption,
-            correctAnswer: currentQuizWord,
-            isCorrect
-        }
-
-        setUserAnswers([...userAnswers, newAnswer])
-
-        if (isCorrect) {
-            setQuizScore(quizScore + 1)
-        }
-
-        // Attendre 1.5 secondes puis passer à la question suivante
+    const handleQuizAnswer = (answerIndex) => {
+        selectAnswer(answerIndex)
         setTimeout(() => {
-            if (currentQuizIndex < quizWords.length - 1) {
-                const nextIndex = currentQuizIndex + 1
-                setCurrentQuizIndex(nextIndex)
-                generateQuizQuestion(quizWords, nextIndex)
-            } else {
-                setQuizCompleted(true)
-            }
-        }, 1500)
+            submitAnswer()
+            setTimeout(() => {
+                nextQuestion()
+            }, 1500)
+        }, 100)
     }
 
-    const restartQuiz = () => {
-        startQuiz()
-    }
-
-    const backToFlashcards = () => {
+    const handleBackToFlashcards = () => {
         setMode('flashcard')
-        loadWords()
+        exitQuiz()
     }
 
     if (loading) {
@@ -353,14 +77,14 @@ function App() {
                 <div className="text-center">
                     <div className={`text-2xl font-bold ${theme.text} mb-2`}>Chargement...</div>
                     <div className={theme.textSecondary}>
-                        {mode === 'quiz' ? 'Préparation du quiz...' : 'Préparation de vos mots'}
+                        {isQuizMode ? 'Préparation du quiz...' : 'Préparation de vos mots'}
                     </div>
                 </div>
             </div>
         )
     }
 
-    if (mode === 'flashcard' && !currentWord) {
+    if (!isQuizMode && !currentWord) {
         return (
             <div className={`min-h-screen ${theme.background} flex items-center justify-center`}>
                 <div className="text-center">
@@ -380,10 +104,10 @@ function App() {
                         EnglishMaster
                     </h1>
                     <p className={theme.textSecondary}>
-                        {mode === 'quiz' ? 'Quiz interactif - 10 questions' : 'Apprenez l\'anglais avec des flashcards interactives'}
+                        {isQuizMode ? 'Quiz interactif - 10 questions' : 'Apprenez l\'anglais avec des flashcards interactives'}
                     </p>
                     <Badge variant="outline" className={`mt-2 ${theme.badgeOutline}`}>
-                        {mode === 'quiz' ? `Question ${currentQuizIndex + 1}/10` : `v2.0 - ${totalWords} mots disponibles`}
+                        {isQuizMode ? `Question ${currentQuizIndex + 1}/10` : `v2.0 - ${totalWords} mots disponibles`}
                     </Badge>
                 </div>
 
@@ -399,8 +123,8 @@ function App() {
                                     key={key}
                                     onClick={() => setSelectedTheme(key)}
                                     className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${selectedTheme === key
-                                            ? getThemeClasses(theme, 'button-primary-solid')
-                                            : getThemeClasses(theme, 'button-secondary')
+                                        ? getThemeClasses(theme, 'button-primary-solid')
+                                        : getThemeClasses(theme, 'button-secondary')
                                         }`}
                                 >
                                     {themeOption.name}
@@ -414,15 +138,18 @@ function App() {
                 <div className="text-center mb-6">
                     <div className="flex justify-center gap-2 mb-4">
                         <button
-                            onClick={() => setMode('flashcard')}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', mode === 'flashcard')
+                            onClick={() => {
+                                setMode('flashcard')
+                                exitQuiz()
+                            }}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', !isQuizMode)
                                 }`}
                         >
                             📚 Flashcards
                         </button>
                         <button
-                            onClick={startQuiz}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', mode === 'quiz')
+                            onClick={handleStartQuiz}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', isQuizMode)
                                 }`}
                         >
                             🎯 Quiz (10 questions)
@@ -450,7 +177,7 @@ function App() {
                 )}
 
                 {/* Contenu principal - MODE QUIZ */}
-                {mode === 'quiz' && !quizCompleted && currentQuizWord && (
+                {isQuizMode && !quizCompleted && currentQuizWord && (
                     <Card className={`mb-6 max-w-lg mx-auto ${theme.card} shadow-sm`}>
                         <CardHeader>
                             <CardTitle className={`text-center text-2xl font-bold ${theme.text} mb-2`}>
@@ -505,7 +232,7 @@ function App() {
                 )}
 
                 {/* Résultats du Quiz */}
-                {mode === 'quiz' && quizCompleted && (
+                {isQuizMode && quizCompleted && (
                     <Card className={`mb-6 max-w-lg mx-auto ${theme.card} shadow-sm`}>
                         <CardHeader>
                             <CardTitle className={`text-center text-3xl font-bold ${theme.text}`}>
@@ -535,7 +262,7 @@ function App() {
                                     🔄 Refaire le quiz
                                 </button>
                                 <button
-                                    onClick={backToFlashcards}
+                                    onClick={handleBackToFlashcards}
                                     className={`px-6 py-2 rounded-lg transition-colors ${getThemeClasses(theme, 'button-secondary')}`}
                                 >
                                     📚 Retour aux flashcards
@@ -546,7 +273,7 @@ function App() {
                 )}
 
                 {/* Contenu principal - MODE FLASHCARD */}
-                {mode === 'flashcard' && currentWord && (
+                {!isQuizMode && currentWord && (
                     <Card className={`mb-6 max-w-lg mx-auto ${theme.card} shadow-sm`}>
                         <CardHeader>
                             <CardTitle className={`text-center text-3xl font-bold ${theme.text}`}>
@@ -618,7 +345,7 @@ function App() {
                 )}
 
                 {/* Navigation - seulement en mode flashcard */}
-                {mode === 'flashcard' && currentWord && (
+                {!isQuizMode && currentWord && (
                     <>
                         <div className="flex justify-center gap-4 mb-4">
                             <button
