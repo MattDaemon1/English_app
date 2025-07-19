@@ -93,38 +93,54 @@ function App() {
     }
 
     return (
-        <div className={`min-h-screen ${theme.background}`}>
-            <div className="container mx-auto p-4 max-w-4xl">
-                {/* Header */}
-                <div className="text-center mb-8">
-                    <h1 className={`text-4xl font-bold ${theme.text} mb-2`}>
-                        EnglishMaster
-                    </h1>
-                    <p className={theme.textSecondary}>
-                        {isQuizMode ? 'Quiz interactif - 10 questions' : 'Apprenez l\'anglais avec des flashcards interactives'}
+        <div className={`min-h-screen ${theme.background} relative overflow-hidden`}>
+            {/* Éléments décoratifs de fond */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
+            </div>
+
+            <div className="container mx-auto p-6 max-w-5xl relative z-10">
+                {/* Header amélioré */}
+                <div className="text-center mb-12 animate-fadeIn">
+                    <div className="mb-6">
+                        <h1 className={`text-6xl font-black ${theme.text} mb-4 tracking-tight`}>
+                            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 bg-clip-text text-transparent">
+                                English
+                            </span>
+                            <span className={theme.text}>Master</span>
+                        </h1>
+                        <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full mb-4"></div>
+                    </div>
+                    <p className={`${theme.textSecondary} text-lg font-medium mb-4`}>
+                        {isQuizMode ? '🎯 Quiz interactif - Testez vos connaissances' : '📚 Apprenez l\'anglais avec des flashcards interactives'}
                     </p>
-                    <Badge variant="outline" className={`mt-2 ${theme.badgeOutline}`}>
+                    <Badge variant="outline" className={`${theme.badgeOutline} text-sm font-semibold px-4 py-2 rounded-full shadow-lg`}>
                         {isQuizMode ? `Question ${currentQuizIndex + 1}/10` : `v2.0 - ${totalWords} mots disponibles`}
                     </Badge>
                 </div>
 
-                {/* Sélecteur de thème */}
-                <div className="text-center mb-6">
-                    <div className="mb-4">
-                        <label className={`block text-sm font-medium ${theme.textSecondary} mb-2`}>
-                            Choisissez votre thème :
-                        </label>
-                        <div className="flex flex-wrap justify-center gap-2">
+                {/* Sélecteur de thème amélioré */}
+                <div className="text-center mb-8 animate-slideIn">
+                    <div className="mb-6">
+                        <h3 className={`text-lg font-semibold ${theme.text} mb-4`}>
+                            🎨 Choisissez votre ambiance
+                        </h3>
+                        <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
                             {Object.entries(themes).map(([key, themeOption]) => (
                                 <button
                                     key={key}
                                     onClick={() => setSelectedTheme(key)}
-                                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${selectedTheme === key
-                                        ? getThemeClasses(theme, 'button-primary-solid')
-                                        : getThemeClasses(theme, 'button-secondary')
+                                    className={`group relative px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 ${selectedTheme === key
+                                        ? getThemeClasses(themeOption, 'button-primary-solid') + ' ring-4 ring-white/30'
+                                        : getThemeClasses(themeOption, 'button-secondary') + ' hover:shadow-xl'
                                         }`}
                                 >
-                                    {themeOption.name}
+                                    <span className="relative z-10">{themeOption.name}</span>
+                                    {selectedTheme === key && (
+                                        <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl opacity-20 animate-pulse"></div>
+                                    )}
                                 </button>
                             ))}
                         </div>
@@ -195,14 +211,14 @@ function App() {
 
                                     if (selectedAnswer !== null) {
                                         if (index === currentQuizWord.correctAnswer) {
-                                            buttonClass += "bg-green-100 border-green-500 text-green-800"
+                                            buttonClass += "bg-green-100 border-green-500 text-green-800 ring-2 ring-green-300"
                                         } else if (index === selectedAnswer && index !== currentQuizWord.correctAnswer) {
-                                            buttonClass += "bg-red-100 border-red-500 text-red-800"
+                                            buttonClass += "bg-red-100 border-red-500 text-red-800 ring-2 ring-red-300"
                                         } else {
-                                            buttonClass += `${theme.secondary} ${theme.card} ${theme.textSecondary}`
+                                            buttonClass += `${theme.card} border-gray-200 ${theme.textSecondary} opacity-60`
                                         }
                                     } else {
-                                        buttonClass += `${theme.background} ${theme.card} ${theme.text} ${theme.secondary.replace('bg-', 'hover:bg-')}`
+                                        buttonClass += `${theme.card} hover:${theme.secondary} ${theme.text} border-gray-200 hover:border-gray-300 hover:shadow-lg`
                                     }
 
                                     return (
