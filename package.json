@@ -9,10 +9,14 @@
         "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
         "migrate": "node migrate.js",
-        "migrate:reset": "node migrate.js --reset"
+        "migrate:reset": "node migrate.js --reset",
+        "server": "node server.js",
+        "dev:full": "concurrently \"npm run server\" \"npm run dev\" --names \"API,CLIENT\" --prefix-colors \"blue,green\""
     },
     "dependencies": {
         "better-sqlite3": "^11.10.0",
+        "cors": "^2.8.5",
+        "express": "^5.1.0",
         "lucide-react": "^0.263.1",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
@@ -23,6 +27,7 @@
         "@types/react-dom": "^18.2.7",
         "@vitejs/plugin-react": "^4.0.3",
         "autoprefixer": "^10.4.21",
+        "concurrently": "^9.2.0",
         "eslint": "^8.45.0",
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.6.0",

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDatabaseService } from '../services/DatabaseWordService.js';
+import { getApiService } from '../services/ApiWordService.js';
 
 export const useWords = (selectedDifficulty, mode) => {
     const [words, setWords] = useState([]);
@@ -8,7 +8,7 @@ export const useWords = (selectedDifficulty, mode) => {
     const [totalWords, setTotalWords] = useState(0);
     const [showAnswer, setShowAnswer] = useState(true);
 
-    const wordService = getDatabaseService();
+    const wordService = getApiService();
     const currentWord = words[currentWordIndex];
 
     useEffect(() => {

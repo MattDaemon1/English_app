@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getDatabaseService } from '../services/DatabaseWordService.js';
+import { getApiService } from '../services/ApiWordService.js';
 
 export const useQuiz = (selectedDifficulty) => {
     const [isQuizMode, setIsQuizMode] = useState(false);
@@ -11,7 +11,7 @@ export const useQuiz = (selectedDifficulty) => {
     const [showResult, setShowResult] = useState(false);
     const [quizFinished, setQuizFinished] = useState(false);
 
-    const wordService = getDatabaseService();
+    const wordService = getApiService();
     const currentQuizWord = quizWords[currentQuizIndex];
 
     const startQuiz = async () => {
@@ -24,7 +24,7 @@ export const useQuiz = (selectedDifficulty) => {
                     quiz.push(quizWord);
                 }
             }
-            
+
             setQuizWords(quiz);
             setCurrentQuizIndex(0);
             setScore(0);
