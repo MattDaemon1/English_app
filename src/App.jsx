@@ -45,7 +45,7 @@ const themes = {
         secondary: "bg-orange-100 hover:bg-orange-200",
         text: "text-orange-900",
         textSecondary: "text-orange-700",
-        card: "border-orange-200",
+        card: "border-orange-200 bg-white",
         badge: "bg-orange-600 text-white",
         badgeOutline: "border-orange-600 text-orange-800"
     },
@@ -67,9 +67,25 @@ const themes = {
         secondary: "bg-gray-700 hover:bg-gray-600",
         text: "text-white",
         textSecondary: "text-gray-300",
-        card: "border-gray-700 bg-gray-800",
+        card: "border-gray-600 bg-gray-800",
         badge: "bg-gray-600 text-white",
-        badgeOutline: "border-gray-500 text-gray-200"
+        badgeOutline: "border-gray-400 text-gray-200"
+    }
+}
+
+// Fonction utilitaire pour appliquer les classes de thème
+const getThemeClasses = (theme, type, isActive = false) => {
+    switch (type) {
+        case 'button-primary':
+            return isActive
+                ? `${theme.primary} text-white`
+                : `${theme.secondary} ${theme.text}`;
+        case 'button-secondary':
+            return `${theme.secondary} ${theme.text}`;
+        case 'button-primary-solid':
+            return `${theme.primary} text-white`;
+        default:
+            return '';
     }
 }
 
@@ -383,8 +399,8 @@ function App() {
                                     key={key}
                                     onClick={() => setSelectedTheme(key)}
                                     className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${selectedTheme === key
-                                            ? theme.primary + ' text-white'
-                                            : theme.secondary + ' ' + theme.text
+                                            ? getThemeClasses(theme, 'button-primary-solid')
+                                            : getThemeClasses(theme, 'button-secondary')
                                         }`}
                                 >
                                     {themeOption.name}
@@ -399,18 +415,14 @@ function App() {
                     <div className="flex justify-center gap-2 mb-4">
                         <button
                             onClick={() => setMode('flashcard')}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'flashcard'
-                                ? theme.primary + ' text-white'
-                                : theme.secondary + ' ' + theme.text
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', mode === 'flashcard')
                                 }`}
                         >
                             📚 Flashcards
                         </button>
                         <button
                             onClick={startQuiz}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'quiz'
-                                ? theme.primary + ' text-white'
-                                : theme.secondary + ' ' + theme.text
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', mode === 'quiz')
                                 }`}
                         >
                             🎯 Quiz (10 questions)
@@ -428,9 +440,7 @@ function App() {
                             <button
                                 key={level.key}
                                 onClick={() => handleDifficultyChange(level.key)}
-                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedDifficulty === level.key
-                                    ? theme.primary + ' text-white'
-                                    : theme.secondary + ' ' + theme.text
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${getThemeClasses(theme, 'button-primary', selectedDifficulty === level.key)
                                     }`}
                             >
                                 {level.label}
@@ -520,13 +530,13 @@ function App() {
                             <div className="flex justify-center gap-3 mb-4">
                                 <button
                                     onClick={restartQuiz}
-                                    className={`px-6 py-2 ${theme.primary} text-white rounded-lg transition-colors`}
+                                    className={`px-6 py-2 rounded-lg transition-colors ${getThemeClasses(theme, 'button-primary-solid')}`}
                                 >
                                     🔄 Refaire le quiz
                                 </button>
                                 <button
                                     onClick={backToFlashcards}
-                                    className={`px-6 py-2 ${theme.secondary} ${theme.text} rounded-lg transition-colors`}
+                                    className={`px-6 py-2 rounded-lg transition-colors ${getThemeClasses(theme, 'button-secondary')}`}
                                 >
                                     📚 Retour aux flashcards
                                 </button>
@@ -578,13 +588,13 @@ function App() {
                                     <div className="flex justify-center gap-3">
                                         <button
                                             onClick={() => handleKnowAnswer(false)}
-                                            className={`px-4 py-2 ${theme.primary} text-white rounded-lg transition-colors text-sm`}
+                                            className={`px-4 py-2 rounded-lg transition-colors text-sm ${getThemeClasses(theme, 'button-primary-solid')}`}
                                         >
                                             ❌ Je ne savais pas
                                         </button>
                                         <button
                                             onClick={() => handleKnowAnswer(true)}
-                                            className={`px-4 py-2 ${theme.primary} text-white rounded-lg transition-colors text-sm`}
+                                            className={`px-4 py-2 rounded-lg transition-colors text-sm ${getThemeClasses(theme, 'button-primary-solid')}`}
                                         >
                                             ✅ Je savais !
                                         </button>
@@ -597,7 +607,7 @@ function App() {
                                     </div>
                                     <button
                                         onClick={toggleAnswer}
-                                        className={`px-6 py-2 ${theme.primary} text-white rounded-lg transition-colors`}
+                                        className={`px-6 py-2 rounded-lg transition-colors ${getThemeClasses(theme, 'button-primary-solid')}`}
                                     >
                                         Révéler la réponse
                                     </button>
@@ -614,20 +624,20 @@ function App() {
                             <button
                                 onClick={handlePrevious}
                                 disabled={currentWordIndex === 0}
-                                className={`px-6 py-2 ${theme.primary} text-white rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors`}
+                                className={`px-6 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors ${getThemeClasses(theme, 'button-primary-solid')}`}
                             >
                                 ← Précédent
                             </button>
                             <button
                                 onClick={toggleAnswer}
-                                className={`px-6 py-2 ${theme.secondary} ${theme.text} rounded-lg transition-colors`}
+                                className={`px-6 py-2 rounded-lg transition-colors ${getThemeClasses(theme, 'button-secondary')}`}
                             >
                                 {showAnswer ? '🙈 Cacher' : '👁️ Révéler'}
                             </button>
                             <button
                                 onClick={handleNext}
                                 disabled={currentWordIndex === words.length - 1}
-                                className={`px-6 py-2 ${theme.primary} text-white rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors`}
+                                className={`px-6 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors ${getThemeClasses(theme, 'button-primary-solid')}`}
                             >
                                 Suivant →
                             </button>
