@@ -47,7 +47,7 @@ function App() {
     // Gestion du changement de difficulté et mode
 
     const handleStartQuiz = () => {
-        startQuiz() // Plus besoin de setMode
+        startQuiz()
     }
 
     const handleDifficultyChange = (difficulty) => {
@@ -182,19 +182,21 @@ function App() {
                             <div className={`text-center text-3xl font-bold ${theme.text} mb-2`}>
                                 {currentQuizWord.word}
                             </div>
-                            <div className={`text-center text-sm ${theme.textSecondary} italic`}>
-                                {currentQuizWord.pronunciation}
-                            </div>
+                            {currentQuizWord.pronunciation && (
+                                <div className={`text-center text-sm ${theme.textSecondary} italic`}>
+                                    {currentQuizWord.pronunciation}
+                                </div>
+                            )}
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-3">
-                                {quizOptions.map((option, index) => {
+                                {currentQuizWord.choices?.map((choice, index) => {
                                     let buttonClass = "w-full p-4 text-left rounded-lg border transition-colors "
 
-                                    if (selectedAnswer) {
-                                        if (option.id === currentQuizWord.id) {
+                                    if (selectedAnswer !== null) {
+                                        if (index === currentQuizWord.correctAnswer) {
                                             buttonClass += "bg-green-100 border-green-500 text-green-800"
-                                        } else if (option.id === selectedAnswer.id && option.id !== currentQuizWord.id) {
+                                        } else if (index === selectedAnswer && index !== currentQuizWord.correctAnswer) {
                                             buttonClass += "bg-red-100 border-red-500 text-red-800"
                                         } else {
                                             buttonClass += `${theme.secondary} ${theme.card} ${theme.textSecondary}`
@@ -205,13 +207,13 @@ function App() {
 
                                     return (
                                         <button
-                                            key={option.id}
-                                            onClick={() => !selectedAnswer && handleQuizAnswer(option)}
-                                            disabled={!!selectedAnswer}
+                                            key={index}
+                                            onClick={() => selectedAnswer === null && handleQuizAnswer(index)}
+                                            disabled={selectedAnswer !== null}
                                             className={buttonClass}
                                         >
                                             <div className="text-lg font-medium">
-                                                {String.fromCharCode(65 + index)}. {option.translation}
+                                                {String.fromCharCode(65 + index)}. {choice}
                                             </div>
                                         </button>
                                     )

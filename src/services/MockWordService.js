@@ -74,6 +74,27 @@ export class MockWordService {
         return options;
     }
 
+    async generateQuiz(options = {}) {
+        // Obtenir les mots pour le quiz
+        const quizWords = await this.getQuizWords(options.difficulty, options.limit || 10);
+        const allWords = await this.getWords({ limit: 100 }); // Mots pour les options incorrectes
+
+        // Créer les questions de quiz avec les choix multiples
+        const quiz = quizWords.map(word => {
+            const choices = this.generateQuizOptions(word, allWords, 4);
+            const correctAnswer = choices.findIndex(choice => choice.id === word.id);
+
+            return {
+                word: word.word,
+                pronunciation: word.pronunciation,
+                choices: choices.map(choice => choice.translation),
+                correctAnswer: correctAnswer,
+                wordId: word.id,
+                difficulty: word.difficulty
+            };
+        }); return quiz;
+    }
+
     async getWordsCount(filters = {}) {
         let filteredWords = this.words;
 
