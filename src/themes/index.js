@@ -4,23 +4,23 @@ import { useState } from 'react';
 export const themes = {
     classic: {
         name: "🎨 Classique (Gris)",
-        background: "bg-gradient-to-br from-gray-50 to-gray-100",
-        primary: "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900",
-        secondary: "bg-gradient-to-r from-gray-200 to-gray-300 hover:from-gray-300 hover:to-gray-400",
-        text: "text-gray-900",
-        textSecondary: "text-gray-600",
-        card: "border-gray-200",
-        badge: "bg-gradient-to-r from-gray-700 to-gray-800 text-white",
-        badgeOutline: "border-gray-600 text-gray-800",
-        button: "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white",
-        buttonSecondary: "bg-gradient-to-r from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 text-gray-900 border border-gray-300",
-        buttonHover: "hover:from-gray-700 hover:to-gray-800",
-        buttonSecondaryHover: "hover:from-gray-200 hover:to-gray-300",
-        input: "bg-white border-gray-300 text-gray-900 focus:border-gray-500",
-        border: "border-gray-200",
-        cardBackground: "bg-white/80 backdrop-blur-sm border-gray-200",
-        cardSecondary: "bg-gray-50/70 backdrop-blur-sm",
-        accent: "text-gray-800"
+        background: "bg-gray-100",
+        primary: "bg-gray-600 hover:bg-gray-700",
+        secondary: "bg-gray-300 hover:bg-gray-400",
+        text: "text-black",
+        textSecondary: "text-gray-700",
+        card: "bg-white border border-gray-300",
+        badge: "bg-gray-600 text-white",
+        badgeOutline: "border-gray-600 text-black",
+        button: "bg-gray-600 hover:bg-gray-700 text-white",
+        buttonSecondary: "bg-gray-300 hover:bg-gray-400 text-black border border-gray-400",
+        buttonHover: "hover:bg-gray-700",
+        buttonSecondaryHover: "hover:bg-gray-400",
+        input: "bg-white border-gray-400 text-black focus:border-gray-600",
+        border: "border-gray-400",
+        cardBackground: "bg-white border-gray-300",
+        cardSecondary: "bg-gray-200",
+        accent: "text-black"
     },
     ocean: {
         name: "🌊 Océan (Bleu)",
@@ -102,45 +102,131 @@ export const themes = {
         cardSecondary: "bg-purple-50/70 backdrop-blur-sm",
         accent: "text-purple-700"
     },
+    englishmaster: {
+        name: "� EnglishMaster (Nouvelle Charte)",
+        // Couleurs principales basées sur la charte graphique
+        background: "bg-gray-100", // #F4F4F5
+        primary: "bg-blue-500 hover:bg-blue-600", // #3B82F6
+        secondary: "bg-emerald-500 hover:bg-emerald-600", // #10B981
+        text: "text-gray-800", // #1F2937
+        textSecondary: "text-gray-600",
+
+        // Composants spécialisés
+        card: "bg-white border border-gray-200 shadow-sm",
+        cardBackground: "bg-white border border-gray-200 rounded-xl shadow-md",
+        cardSecondary: "bg-gray-50 border border-gray-100",
+
+        // Boutons avec système de couleurs adaptatif
+        button: "bg-blue-500 hover:bg-blue-600 text-white rounded-xl", // Bleu océan principal
+        buttonSecondary: "bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 rounded-xl",
+        buttonSuccess: "bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl", // Vert validation
+        buttonWarning: "bg-orange-500 hover:bg-orange-600 text-white rounded-xl", // Orange avertissement
+        buttonDanger: "bg-red-500 hover:bg-red-600 text-white rounded-xl", // Rouge erreur
+        buttonPurple: "bg-purple-500 hover:bg-purple-600 text-white rounded-xl", // Violet mystique
+
+        // États et feedback
+        success: "text-emerald-600 bg-emerald-50 border-emerald-200",
+        warning: "text-orange-600 bg-orange-50 border-orange-200",
+        error: "text-red-500 bg-red-50 border-red-200",
+
+        // Badges et éléments d'interface
+        badge: "bg-blue-500 text-white rounded-lg",
+        badgeSuccess: "bg-emerald-500 text-white rounded-lg",
+        badgeWarning: "bg-orange-500 text-white rounded-lg",
+        badgeOutline: "border-blue-500 text-blue-600 bg-white",
+
+        // Inputs et formulaires
+        input: "bg-white border-gray-300 text-gray-800 focus:border-blue-500 focus:ring-blue-200 rounded-xl",
+
+        // Bordures et séparateurs
+        border: "border-gray-200",
+        borderStrong: "border-gray-300",
+
+        // Classes utilitaires
+        buttonHover: "hover:bg-blue-600",
+        buttonSecondaryHover: "hover:bg-gray-50",
+        accent: "text-blue-600"
+    },
     dark: {
         name: "🌙 Sombre",
-        background: "bg-gradient-to-br from-gray-900 via-slate-900 to-zinc-900",
-        primary: "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600",
-        secondary: "bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700",
-        text: "text-white",
-        textSecondary: "text-gray-300",
-        card: "border-gray-600 bg-gray-800",
-        badge: "bg-gradient-to-r from-gray-600 to-gray-700 text-white",
-        badgeOutline: "border-gray-400 text-gray-200",
-        button: "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-500 hover:to-gray-600 text-white",
-        buttonSecondary: "bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white border border-gray-600",
-        buttonHover: "hover:from-gray-500 hover:to-gray-600",
-        buttonSecondaryHover: "hover:from-gray-700 hover:to-gray-800",
-        input: "bg-gray-800 border-gray-600 text-white focus:border-gray-400",
-        border: "border-gray-600",
-        cardBackground: "bg-gray-800/80 backdrop-blur-sm border-gray-600",
-        cardSecondary: "bg-gray-700/70 backdrop-blur-sm",
-        accent: "text-gray-200"
+        background: "bg-gray-900", // #18181B selon votre charte
+        primary: "bg-blue-500 hover:bg-blue-400", // Plus saturé en mode sombre
+        secondary: "bg-emerald-500 hover:bg-emerald-400",
+        text: "text-gray-100", // #F4F4F5
+        textSecondary: "text-gray-400",
+        card: "bg-gray-800 border border-gray-700", // #27272A
+        badge: "bg-blue-500 text-white",
+        badgeOutline: "border-blue-400 text-blue-300",
+        button: "bg-blue-500 hover:bg-blue-400 text-white rounded-xl",
+        buttonSecondary: "bg-gray-800 hover:bg-gray-700 text-gray-100 border border-gray-600 rounded-xl",
+        buttonHover: "hover:bg-blue-400",
+        buttonSecondaryHover: "hover:bg-gray-700",
+        input: "bg-gray-800 border-gray-600 text-gray-100 focus:border-blue-400 rounded-xl",
+        border: "border-gray-700",
+        cardBackground: "bg-gray-800 border border-gray-700 rounded-xl shadow-lg",
+        cardSecondary: "bg-gray-900 border border-gray-700",
+        accent: "text-blue-400"
     }
 }
 
 // Fonction utilitaire pour appliquer les classes de thème
-export const getThemeClasses = (theme, type, isActive = false) => {
+export const getThemeClasses = (theme, type, isActive = false, variant = 'primary') => {
+    const baseTransition = "transition-all duration-200";
+    const hoverScale = "hover:scale-105";
+    const shadow = "shadow-md hover:shadow-lg";
+
     switch (type) {
         case 'button-primary':
             return isActive
-                ? `${theme.button} font-semibold shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl`
-                : `${theme.buttonSecondary} font-medium transition-all duration-200 hover:scale-105 hover:shadow-md`;
+                ? `${theme.button} font-semibold ${shadow} transform ${baseTransition} ${hoverScale}`
+                : `${theme.buttonSecondary} font-medium ${baseTransition} ${hoverScale} shadow-sm hover:shadow-md`;
+
         case 'button-secondary':
-            return `${theme.buttonSecondary} font-medium transition-all duration-200 hover:scale-105 hover:shadow-md`;
+            return `${theme.buttonSecondary} font-medium ${baseTransition} ${hoverScale} shadow-sm hover:shadow-md`;
+
         case 'button-primary-solid':
-            return `${theme.button} font-semibold shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl`;
+            return `${theme.button} font-semibold ${shadow} ${baseTransition} ${hoverScale}`;
+
+        case 'button-success':
+            return `${theme.buttonSuccess || theme.button} font-semibold ${shadow} ${baseTransition} ${hoverScale}`;
+
+        case 'button-warning':
+            return `${theme.buttonWarning || theme.button} font-semibold ${shadow} ${baseTransition} ${hoverScale}`;
+
+        case 'button-danger':
+            return `${theme.buttonDanger || theme.button} font-semibold ${shadow} ${baseTransition} ${hoverScale}`;
+
+        case 'button-purple':
+            return `${theme.buttonPurple || theme.button} font-semibold ${shadow} ${baseTransition} ${hoverScale}`;
+
         case 'input':
-            return `${theme.input} focus:ring-2 focus:ring-opacity-50 focus:scale-105 transition-all duration-200 shadow-sm`;
+            return `${theme.input} focus:ring-2 focus:ring-opacity-50 focus:scale-105 ${baseTransition} shadow-sm`;
+
         case 'card':
-            return `${theme.cardBackground} shadow-lg rounded-xl transition-all duration-300 hover:shadow-xl`;
+            return `${theme.cardBackground} ${shadow} transition-all duration-300 hover:shadow-xl`;
+
         case 'card-main':
-            return `${theme.cardBackground} shadow-2xl rounded-2xl border-2 ${theme.border} transition-all duration-300 hover:shadow-3xl`;
+            return `${theme.cardBackground} shadow-2xl border-2 ${theme.border} transition-all duration-300 hover:shadow-3xl`;
+
+        case 'card-quiz':
+            return `${theme.cardBackground} ${shadow} transition-all duration-300 hover:shadow-xl transform hover:scale-105`;
+
+        case 'badge-success':
+            return `${theme.badgeSuccess || theme.badge} px-3 py-1 text-sm font-medium`;
+
+        case 'badge-warning':
+            return `${theme.badgeWarning || theme.badge} px-3 py-1 text-sm font-medium`;
+
+        case 'badge-error':
+            return `${theme.error} px-3 py-1 text-sm font-medium rounded-lg`;
+
+        case 'score-indicator':
+            // Système de couleurs pour les scores selon la charte
+            if (variant === 'low') return `${theme.error} px-4 py-2 rounded-xl font-bold text-lg`; // 0-4/10
+            if (variant === 'medium') return `${theme.warning} px-4 py-2 rounded-xl font-bold text-lg`; // 5-7/10
+            if (variant === 'high') return `${theme.success} px-4 py-2 rounded-xl font-bold text-lg`; // 8-10/10
+            return `${theme.badge} px-4 py-2 rounded-xl font-bold text-lg`;
+
         default:
             return '';
     }
