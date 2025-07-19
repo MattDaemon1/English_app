@@ -18,7 +18,7 @@ app.use(express.json());
 app.get('/api/words', async (req, res) => {
     try {
         const { difficulty, category, search, limit } = req.query;
-        
+
         const filters = {};
         if (difficulty && difficulty !== 'all') filters.difficulty = difficulty;
         if (category) filters.category = category;
@@ -50,11 +50,11 @@ app.get('/api/words/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const word = db.getWordById(parseInt(id));
-        
+
         if (!word) {
             return res.status(404).json({ success: false, error: 'Mot non trouvé' });
         }
-        
+
         res.json({ success: true, data: word });
     } catch (error) {
         console.error('Erreur API /words/:id:', error);
@@ -66,7 +66,7 @@ app.get('/api/words/:id', async (req, res) => {
 app.post('/api/quiz/generate', async (req, res) => {
     try {
         const { difficulty = 'all', count = 10 } = req.body;
-        
+
         const words = db.getRandomWords(count, difficulty === 'all' ? null : difficulty);
         if (words.length === 0) {
             return res.status(404).json({ success: false, error: 'Aucun mot trouvé' });
@@ -74,7 +74,7 @@ app.post('/api/quiz/generate', async (req, res) => {
 
         const quizWord = words[0];
         const otherWords = db.getRandomWords(3, difficulty === 'all' ? null : difficulty);
-        
+
         // Créer les choix de réponse
         const choices = [
             quizWord.translation,
@@ -109,11 +109,11 @@ app.post('/api/quiz/generate', async (req, res) => {
 app.post('/api/progress', async (req, res) => {
     try {
         const { wordId, knowsWord } = req.body;
-        
+
         if (!wordId || typeof knowsWord !== 'boolean') {
-            return res.status(400).json({ 
-                success: false, 
-                error: 'wordId et knowsWord sont requis' 
+            return res.status(400).json({
+                success: false,
+                error: 'wordId et knowsWord sont requis'
             });
         }
 
@@ -129,11 +129,11 @@ app.post('/api/progress', async (req, res) => {
 app.get('/api/progress', async (req, res) => {
     try {
         const { wordId } = req.query;
-        
-        const progress = wordId 
+
+        const progress = wordId
             ? db.getUserProgress(parseInt(wordId))
             : db.getUserProgress();
-            
+
         res.json({ success: true, data: progress });
     } catch (error) {
         console.error('Erreur API /progress:', error);
@@ -147,7 +147,7 @@ app.get('/api/progress', async (req, res) => {
 app.post('/api/quiz/session', async (req, res) => {
     try {
         const { score, totalQuestions, difficulty, durationSeconds } = req.body;
-        
+
         const result = db.saveQuizSession(score, totalQuestions, difficulty, durationSeconds);
         res.json({ success: true, data: { sessionId: result.lastInsertRowid } });
     } catch (error) {
@@ -160,7 +160,7 @@ app.post('/api/quiz/session', async (req, res) => {
 app.post('/api/quiz/answer', async (req, res) => {
     try {
         const { sessionId, wordId, isCorrect, timeTakenSeconds } = req.body;
-        
+
         const result = db.saveQuizAnswer(sessionId, wordId, isCorrect, timeTakenSeconds);
         res.json({ success: true, data: result });
     } catch (error) {
@@ -177,13 +177,13 @@ app.get('/api/stats', async (req, res) => {
         const quizStats = db.getQuizStats();
         const totalWords = db.getTotalWordsCount();
         const categories = db.getCategories();
-        
+
         const stats = {
             totalWords,
             categories: categories.length,
             quizStats
         };
-        
+
         res.json({ success: true, data: stats });
     } catch (error) {
         console.error('Erreur API /stats:', error);
@@ -217,9 +217,9 @@ function shuffleArray(array) {
 
 app.use((err, req, res, next) => {
     console.error('Erreur serveur:', err);
-    res.status(500).json({ 
-        success: false, 
-        error: 'Erreur interne du serveur' 
+    res.status(500).json({
+        success: false,
+        error: 'Erreur interne du serveur'
     });
 });
 

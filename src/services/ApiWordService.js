@@ -12,14 +12,14 @@ class ApiWordService {
             if (difficulty && difficulty !== 'all') {
                 params.append('difficulty', difficulty);
             }
-            
+
             const response = await fetch(`${this.baseUrl}/words?${params}`);
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data.map(word => this.formatWord(word));
         } catch (error) {
             console.error('Erreur lors de la récupération des mots:', error);
@@ -31,11 +31,11 @@ class ApiWordService {
         try {
             const response = await fetch(`${this.baseUrl}/words/${id}`);
             const result = await response.json();
-            
+
             if (!result.success) {
                 return null;
             }
-            
+
             return this.formatWord(result.data);
         } catch (error) {
             console.error('Erreur lors de la récupération du mot:', error);
@@ -50,14 +50,14 @@ class ApiWordService {
             if (difficulty && difficulty !== 'all') {
                 params.append('difficulty', difficulty);
             }
-            
+
             const response = await fetch(`${this.baseUrl}/words?${params}`);
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data.map(word => this.formatWord(word));
         } catch (error) {
             console.error('Erreur lors de la recherche:', error);
@@ -71,14 +71,14 @@ class ApiWordService {
             if (difficulty && difficulty !== 'all') {
                 params.append('difficulty', difficulty);
             }
-            
+
             const response = await fetch(`${this.baseUrl}/words/count?${params}`);
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data.count;
         } catch (error) {
             console.error('Erreur lors du comptage des mots:', error);
@@ -97,13 +97,13 @@ class ApiWordService {
                 },
                 body: JSON.stringify({ difficulty, count })
             });
-            
+
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data;
         } catch (error) {
             console.error('Erreur lors de la génération du quiz:', error);
@@ -122,13 +122,13 @@ class ApiWordService {
                 },
                 body: JSON.stringify({ wordId, knowsWord })
             });
-            
+
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data;
         } catch (error) {
             console.error('Erreur lors de la mise à jour du progrès:', error);
@@ -142,14 +142,14 @@ class ApiWordService {
             if (wordId) {
                 params.append('wordId', wordId);
             }
-            
+
             const response = await fetch(`${this.baseUrl}/progress?${params}`);
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data;
         } catch (error) {
             console.error('Erreur lors de la récupération du progrès:', error);
@@ -168,13 +168,13 @@ class ApiWordService {
                 },
                 body: JSON.stringify({ score, totalQuestions, difficulty, durationSeconds })
             });
-            
+
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data;
         } catch (error) {
             console.error('Erreur lors de l\'enregistrement de la session:', error);
@@ -191,13 +191,13 @@ class ApiWordService {
                 },
                 body: JSON.stringify({ sessionId, wordId, isCorrect, timeTakenSeconds })
             });
-            
+
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data;
         } catch (error) {
             console.error('Erreur lors de l\'enregistrement de la réponse:', error);
@@ -211,11 +211,11 @@ class ApiWordService {
         try {
             const response = await fetch(`${this.baseUrl}/stats`);
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data;
         } catch (error) {
             console.error('Erreur lors de la récupération des statistiques:', error);
@@ -236,11 +236,11 @@ class ApiWordService {
         try {
             const response = await fetch(`${this.baseUrl}/categories`);
             const result = await response.json();
-            
+
             if (!result.success) {
                 throw new Error(result.error);
             }
-            
+
             return result.data;
         } catch (error) {
             console.error('Erreur lors de la récupération des catégories:', error);
