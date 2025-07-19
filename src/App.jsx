@@ -77,6 +77,16 @@ class MockWordService {
         return options;
     }
 
+    async getWordsCount(filters = {}) {
+        let filteredWords = this.words;
+
+        if (filters.difficulty) {
+            filteredWords = filteredWords.filter(word => word.difficulty === filters.difficulty);
+        }
+
+        return filteredWords.length;
+    }
+
     async getProgressStats() {
         const totalStudied = this.progress.size;
         const learned = Array.from(this.progress.values()).filter(p => p.learned).length;
@@ -109,14 +119,27 @@ function App() {
     const [totalWords, setTotalWords] = useState(0)
     const [selectedDifficulty, setSelectedDifficulty] = useState('all')
     const [showAnswer, setShowAnswer] = useState(true) // Mode flashcard
+    
+    // États pour le mode quiz
+    const [mode, setMode] = useState('flashcard') // 'flashcard' ou 'quiz'
+    const [quizWords, setQuizWords] = useState([])
+    const [currentQuizIndex, setCurrentQuizIndex] = useState(0)
+    const [quizOptions, setQuizOptions] = useState([])
+    const [selectedAnswer, setSelectedAnswer] = useState(null)
+    const [quizScore, setQuizScore] = useState(0)
+    const [quizCompleted, setQuizCompleted] = useState(false)
+    const [userAnswers, setUserAnswers] = useState([])
 
     const wordService = new MockWordService()
     const currentWord = words[currentWordIndex]
+    const currentQuizWord = quizWords[currentQuizIndex]
 
     // Charger les mots depuis le service
     useEffect(() => {
-        loadWords()
-    }, [selectedDifficulty])
+        if (mode === 'flashcard') {
+            loadWords()
+        }
+    }, [selectedDifficulty, mode])
 
     const loadWords = async () => {
         setLoading(true)
@@ -140,6 +163,36 @@ function App() {
         } finally {
             setLoading(false)
         }
+    }
+
+    const startQuiz = async () => {
+        setLoading(true)
+        setMode('quiz')
+        setQuizCompleted(false)
+        setQuizScore(0)
+        setCurrentQuizIndex(0)
+        setUserAnswers([])
+        
+        try {
+            const quizWordsData = await wordService.getQuizWords(selectedDifficulty, 10)
+            setQuizWords(quizWordsData)
+            
+            if (quizWordsData.length > 0) {
+                generateQuizQuestion(quizWordsData, 0)
+            }
+        } catch (error) {
+            console.error('Erreur lors du démarrage du quiz:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const generateQuizQuestion = async (allQuizWords, questionIndex) => {
+        const currentWord = allQuizWords[questionIndex]
+        const allWords = await wordService.getWords({ limit: 100 })
+        const options = wordService.generateQuizOptions(currentWord, allWords, 4)
+        setQuizOptions(options)
+        setSelectedAnswer(null)
     }
 
     const handleNext = () => {
@@ -168,18 +221,58 @@ function App() {
         handleNext()
     }
 
+    const handleQuizAnswer = (selectedOption) => {
+        setSelectedAnswer(selectedOption)
+        
+        const isCorrect = selectedOption.id === currentQuizWord.id
+        const newAnswer = {
+            question: currentQuizWord,
+            selectedAnswer: selectedOption,
+            correctAnswer: currentQuizWord,
+            isCorrect
+        }
+        
+        setUserAnswers([...userAnswers, newAnswer])
+        
+        if (isCorrect) {
+            setQuizScore(quizScore + 1)
+        }
+
+        // Attendre 1.5 secondes puis passer à la question suivante
+        setTimeout(() => {
+            if (currentQuizIndex < quizWords.length - 1) {
+                const nextIndex = currentQuizIndex + 1
+                setCurrentQuizIndex(nextIndex)
+                generateQuizQuestion(quizWords, nextIndex)
+            } else {
+                setQuizCompleted(true)
+            }
+        }, 1500)
+    }
+
+    const restartQuiz = () => {
+        startQuiz()
+    }
+
+    const backToFlashcards = () => {
+        setMode('flashcard')
+        loadWords()
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
                 <div className="text-center">
                     <div className="text-2xl font-bold text-gray-700 mb-2">Chargement...</div>
-                    <div className="text-gray-500">Préparation de vos mots</div>
+                    <div className="text-gray-500">
+                        {mode === 'quiz' ? 'Préparation du quiz...' : 'Préparation de vos mots'}
+                    </div>
                 </div>
             </div>
         )
     }
 
-    if (!currentWord) {
+    if (mode === 'flashcard' && !currentWord) {
         return (
             <div className="min-h-screen bg-white flex items-center justify-center">
                 <div className="text-center">
@@ -198,133 +291,263 @@ function App() {
                     <h1 className="text-4xl font-bold text-gray-900 mb-2">
                         EnglishMaster
                     </h1>
-                    <p className="text-gray-600">Apprenez l'anglais avec des flashcards interactives</p>
-                    <Badge variant="outline" className="mt-2 border-gray-300 text-gray-700">
-                        v2.0 - {totalWords} mots disponibles
+                    <p className="text-gray-600">
+                        {mode === 'quiz' ? 'Quiz interactif - 10 questions' : 'Apprenez l\'anglais avec des flashcards interactives'}
+                    </p>
+                    <Badge variant="outline" className="mt-2 border-gray-600 text-gray-800">
+                        {mode === 'quiz' ? `Question ${currentQuizIndex + 1}/10` : `v2.0 - ${totalWords} mots disponibles`}
                     </Badge>
+                </div>
+
+                {/* Sélecteur de mode et filtres */}
+                <div className="text-center mb-6">
+                    <div className="flex justify-center gap-2 mb-4">
+                        <button
+                            onClick={() => setMode('flashcard')}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'flashcard'
+                                    ? 'bg-gray-800 text-white'
+                                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                }`}
+                        >
+                            📚 Flashcards
+                        </button>
+                        <button
+                            onClick={startQuiz}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'quiz'
+                                    ? 'bg-gray-800 text-white'
+                                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                }`}
+                        >
+                            🎯 Quiz (10 questions)
+                        </button>
+                    </div>
                 </div>
 
                 {/* Filtres de difficulté */}
-                <div className="flex justify-center gap-2 mb-6">
-                    {[
-                        { key: 'all', label: 'Tous' },
-                        { key: 'beginner', label: 'Débutant' },
-                        { key: 'intermediate', label: 'Intermédiaire' },
-                        { key: 'advanced', label: 'Avancé' }
-                    ].map((level) => (
-                        <button
-                            key={level.key}
-                            onClick={() => handleDifficultyChange(level.key)}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedDifficulty === level.key
-                                ? 'bg-gray-800 text-white'
-                                : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                                }`}
-                        >
-                            {level.label}
-                        </button>
-                    ))}
-                </div>
+                {!quizCompleted && (
+                    <div className="flex justify-center gap-2 mb-6">
+                        {[
+                            { key: 'all', label: 'Tous' },
+                            { key: 'beginner', label: 'Débutant' },
+                            { key: 'intermediate', label: 'Intermédiaire' },
+                            { key: 'advanced', label: 'Avancé' }
+                        ].map((level) => (
+                            <button
+                                key={level.key}
+                                onClick={() => handleDifficultyChange(level.key)}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedDifficulty === level.key
+                                        ? 'bg-gray-800 text-white'
+                                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                    }`}
+                            >
+                                {level.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
 
-                {/* Flashcard */}
-                <Card className="mb-6 max-w-lg mx-auto border-gray-200 shadow-sm">
-                    <CardHeader>
-                        <CardTitle className="text-center text-3xl font-bold text-gray-900">
-                            {currentWord.word}
-                        </CardTitle>
-                        <div className="text-center text-sm text-gray-500 italic">
-                            {currentWord.pronunciation}
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {showAnswer ? (
-                            <>
-                                <div className="text-center text-xl text-gray-700 font-medium mb-4">
-                                    {currentWord.translation}
+                {/* Contenu principal - MODE QUIZ */}
+                {mode === 'quiz' && !quizCompleted && currentQuizWord && (
+                    <Card className="mb-6 max-w-lg mx-auto border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-center text-2xl font-bold text-gray-900 mb-2">
+                                Quelle est la traduction de :
+                            </CardTitle>
+                            <div className="text-center text-3xl font-bold text-gray-800 mb-2">
+                                {currentQuizWord.word}
+                            </div>
+                            <div className="text-center text-sm text-gray-500 italic">
+                                {currentQuizWord.pronunciation}
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-3">
+                                {quizOptions.map((option, index) => {
+                                    let buttonClass = "w-full p-4 text-left rounded-lg border transition-colors "
+                                    
+                                    if (selectedAnswer) {
+                                        if (option.id === currentQuizWord.id) {
+                                            buttonClass += "bg-green-100 border-green-500 text-green-800"
+                                        } else if (option.id === selectedAnswer.id && option.id !== currentQuizWord.id) {
+                                            buttonClass += "bg-red-100 border-red-500 text-red-800"
+                                        } else {
+                                            buttonClass += "bg-gray-50 border-gray-200 text-gray-600"
+                                        }
+                                    } else {
+                                        buttonClass += "bg-white border-gray-200 text-gray-800 hover:bg-gray-50 hover:border-gray-300"
+                                    }
+
+                                    return (
+                                        <button
+                                            key={option.id}
+                                            onClick={() => !selectedAnswer && handleQuizAnswer(option)}
+                                            disabled={!!selectedAnswer}
+                                            className={buttonClass}
+                                        >
+                                            <div className="text-lg font-medium">
+                                                {String.fromCharCode(65 + index)}. {option.translation}
+                                            </div>
+                                        </button>
+                                    )
+                                })}
+                            </div>
+                            
+                            <div className="mt-6 text-center">
+                                <div className="text-sm text-gray-500">
+                                    Score actuel: {quizScore}/{currentQuizIndex + (selectedAnswer ? 1 : 0)}
                                 </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
-                                {currentWord.definition && (
-                                    <div className="text-center text-sm text-gray-600 mb-3">
-                                        <strong>Définition:</strong> {currentWord.definition}
-                                    </div>
-                                )}
-
-                                {currentWord.example && (
-                                    <div className="text-center text-sm text-gray-600 mb-4">
-                                        <div className="italic">"{currentWord.example}"</div>
-                                        <div className="text-gray-500">"{currentWord.exampleTranslation}"</div>
-                                    </div>
-                                )}
-
-                                <div className="flex justify-center mb-4">
-                                    <Badge variant="secondary" className="text-xs bg-gray-800 text-white">
-                                        {currentWord.difficulty === 'beginner' ? 'Débutant' :
-                                            currentWord.difficulty === 'intermediate' ? 'Intermédiaire' :
-                                                currentWord.difficulty === 'advanced' ? 'Avancé' : currentWord.difficulty}
-                                    </Badge>
+                {/* Résultats du Quiz */}
+                {mode === 'quiz' && quizCompleted && (
+                    <Card className="mb-6 max-w-lg mx-auto border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-center text-3xl font-bold text-gray-900">
+                                Quiz Terminé ! 🎉
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-center mb-6">
+                                <div className="text-4xl font-bold text-gray-800 mb-2">
+                                    {quizScore}/10
                                 </div>
+                                <div className="text-lg text-gray-600 mb-4">
+                                    Score: {Math.round((quizScore / 10) * 100)}%
+                                </div>
+                                <Badge variant="secondary" className="text-sm bg-gray-800 text-white">
+                                    {quizScore >= 8 ? '🏆 Excellent' : 
+                                     quizScore >= 6 ? '👍 Bien' : 
+                                     quizScore >= 4 ? '👌 Correct' : '💪 Continuez !'}
+                                </Badge>
+                            </div>
 
-                                {/* Boutons de réponse */}
-                                <div className="flex justify-center gap-3">
-                                    <button
-                                        onClick={() => handleKnowAnswer(false)}
-                                        className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
-                                    >
-                                        ❌ Je ne savais pas
-                                    </button>
-                                    <button
-                                        onClick={() => handleKnowAnswer(true)}
-                                        className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
-                                    >
-                                        ✅ Je savais !
-                                    </button>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="text-center">
-                                <div className="text-lg text-gray-500 mb-4">
-                                    🤔 Connaissez-vous ce mot ?
-                                </div>
+                            <div className="flex justify-center gap-3 mb-4">
                                 <button
-                                    onClick={toggleAnswer}
+                                    onClick={restartQuiz}
                                     className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
                                 >
-                                    Révéler la réponse
+                                    🔄 Refaire le quiz
+                                </button>
+                                <button
+                                    onClick={backToFlashcards}
+                                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                                >
+                                    📚 Retour aux flashcards
                                 </button>
                             </div>
-                        )}
-                    </CardContent>
-                </Card>
+                        </CardContent>
+                    </Card>
+                )}
 
-                {/* Navigation */}
-                <div className="flex justify-center gap-4 mb-4">
-                    <button
-                        onClick={handlePrevious}
-                        disabled={currentWordIndex === 0}
-                        className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                        ← Précédent
-                    </button>
-                    <button
-                        onClick={toggleAnswer}
-                        className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
-                    >
-                        {showAnswer ? '🙈 Cacher' : '👁️ Révéler'}
-                    </button>
-                    <button
-                        onClick={handleNext}
-                        disabled={currentWordIndex === words.length - 1}
-                        className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                    >
-                        Suivant →
-                    </button>
-                </div>
+                {/* Contenu principal - MODE FLASHCARD */}
+                {mode === 'flashcard' && currentWord && (
+                    <Card className="mb-6 max-w-lg mx-auto border-gray-200 shadow-sm">
+                        <CardHeader>
+                            <CardTitle className="text-center text-3xl font-bold text-gray-900">
+                                {currentWord.word}
+                            </CardTitle>
+                            <div className="text-center text-sm text-gray-500 italic">
+                                {currentWord.pronunciation}
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            {showAnswer ? (
+                                <>
+                                    <div className="text-center text-xl text-gray-700 font-medium mb-4">
+                                        {currentWord.translation}
+                                    </div>
 
-                {/* Compteur */}
-                <div className="text-center text-gray-600">
-                    <Badge variant="outline" className="border-gray-600 text-gray-800">
-                        {currentWordIndex + 1} / {words.length}
-                    </Badge>
-                </div>
+                                    {currentWord.definition && (
+                                        <div className="text-center text-sm text-gray-600 mb-3">
+                                            <strong>Définition:</strong> {currentWord.definition}
+                                        </div>
+                                    )}
+
+                                    {currentWord.example && (
+                                        <div className="text-center text-sm text-gray-600 mb-4">
+                                            <div className="italic">"{currentWord.example}"</div>
+                                            <div className="text-gray-500">"{currentWord.exampleTranslation}"</div>
+                                        </div>
+                                    )}
+
+                                    <div className="flex justify-center mb-4">
+                                        <Badge variant="secondary" className="text-xs bg-gray-800 text-white">
+                                            {currentWord.difficulty === 'beginner' ? 'Débutant' :
+                                                currentWord.difficulty === 'intermediate' ? 'Intermédiaire' :
+                                                    currentWord.difficulty === 'advanced' ? 'Avancé' : currentWord.difficulty}
+                                        </Badge>
+                                    </div>
+
+                                    {/* Boutons de réponse */}
+                                    <div className="flex justify-center gap-3">
+                                        <button
+                                            onClick={() => handleKnowAnswer(false)}
+                                            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                                        >
+                                            ❌ Je ne savais pas
+                                        </button>
+                                        <button
+                                            onClick={() => handleKnowAnswer(true)}
+                                            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                                        >
+                                            ✅ Je savais !
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center">
+                                    <div className="text-lg text-gray-500 mb-4">
+                                        🤔 Connaissez-vous ce mot ?
+                                    </div>
+                                    <button
+                                        onClick={toggleAnswer}
+                                        className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                                    >
+                                        Révéler la réponse
+                                    </button>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+                )}
+
+                {/* Navigation - seulement en mode flashcard */}
+                {mode === 'flashcard' && currentWord && (
+                    <>
+                        <div className="flex justify-center gap-4 mb-4">
+                            <button
+                                onClick={handlePrevious}
+                                disabled={currentWordIndex === 0}
+                                className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                                ← Précédent
+                            </button>
+                            <button
+                                onClick={toggleAnswer}
+                                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                            >
+                                {showAnswer ? '🙈 Cacher' : '👁️ Révéler'}
+                            </button>
+                            <button
+                                onClick={handleNext}
+                                disabled={currentWordIndex === words.length - 1}
+                                className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            >
+                                Suivant →
+                            </button>
+                        </div>
+
+                        {/* Compteur */}
+                        <div className="text-center text-gray-600">
+                            <Badge variant="outline" className="border-gray-600 text-gray-800">
+                                {currentWordIndex + 1} / {words.length}
+                            </Badge>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )
