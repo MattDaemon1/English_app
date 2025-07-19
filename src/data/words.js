@@ -1,3 +1,21 @@
+// Base de données de mots anglais avec système de niveaux de difficulté
+
+// Configuration des niveaux de difficulté
+export const difficulties = ['beginner', 'intermediate', 'advanced'];
+
+// Catégories thématiques
+export const categories = [
+    'daily-life',
+    'food',
+    'travel',
+    'work',
+    'emotions',
+    'nature',
+    'technology',
+    'education',
+    'greetings'
+];
+
 // Sélection de mots anglais courants avec traductions et exemples
 export const wordsData = [
     {
@@ -239,23 +257,245 @@ export const wordsData = [
         exampleTranslation: "L'avenir semble prometteur.",
         difficulty: "intermediate",
         category: "time"
+    },
+    {
+        id: 21,
+        word: "water",
+        translation: "eau",
+        pronunciation: "/ˈwɔːtər/",
+        partOfSpeech: "noun",
+        definition: "Liquide transparent essentiel à la vie",
+        example: "I drink water every day.",
+        exampleTranslation: "Je bois de l'eau tous les jours.",
+        difficulty: "beginner",
+        category: "daily-life"
+    },
+    {
+        id: 22,
+        word: "house",
+        translation: "maison",
+        pronunciation: "/haʊs/",
+        partOfSpeech: "noun",
+        definition: "Bâtiment où vivent les gens",
+        example: "My house is small but comfortable.",
+        exampleTranslation: "Ma maison est petite mais confortable.",
+        difficulty: "beginner",
+        category: "daily-life"
+    },
+    {
+        id: 23,
+        word: "school",
+        translation: "école",
+        pronunciation: "/skuːl/",
+        partOfSpeech: "noun",
+        definition: "Établissement d'enseignement",
+        example: "Children go to school to learn.",
+        exampleTranslation: "Les enfants vont à l'école pour apprendre.",
+        difficulty: "beginner",
+        category: "education"
+    },
+    {
+        id: 24,
+        word: "book",
+        translation: "livre",
+        pronunciation: "/bʊk/",
+        partOfSpeech: "noun",
+        definition: "Collection de pages avec du texte",
+        example: "I'm reading an interesting book.",
+        exampleTranslation: "Je lis un livre intéressant.",
+        difficulty: "beginner",
+        category: "education"
+    },
+    {
+        id: 25,
+        word: "food",
+        translation: "nourriture",
+        pronunciation: "/fuːd/",
+        partOfSpeech: "noun",
+        definition: "Substances nutritives que l'on mange",
+        example: "Healthy food is important.",
+        exampleTranslation: "La nourriture saine est importante.",
+        difficulty: "beginner",
+        category: "food"
+    },
+    {
+        id: 26,
+        word: "car",
+        translation: "voiture",
+        pronunciation: "/kɑːr/",
+        partOfSpeech: "noun",
+        definition: "Véhicule automobile",
+        example: "My car is red.",
+        exampleTranslation: "Ma voiture est rouge.",
+        difficulty: "beginner",
+        category: "transport"
+    },
+    {
+        id: 27,
+        word: "work",
+        translation: "travail",
+        pronunciation: "/wɜːrk/",
+        partOfSpeech: "noun/verb",
+        definition: "Activité professionnelle ou effort",
+        example: "I work in an office.",
+        exampleTranslation: "Je travaille dans un bureau.",
+        difficulty: "beginner",
+        category: "work"
+    },
+    {
+        id: 28,
+        word: "money",
+        translation: "argent",
+        pronunciation: "/ˈmʌni/",
+        partOfSpeech: "noun",
+        definition: "Moyen d'échange pour acheter",
+        example: "Money can't buy happiness.",
+        exampleTranslation: "L'argent ne peut pas acheter le bonheur.",
+        difficulty: "beginner",
+        category: "daily-life"
+    },
+    {
+        id: 29,
+        word: "time",
+        translation: "temps",
+        pronunciation: "/taɪm/",
+        partOfSpeech: "noun",
+        definition: "Durée ou moment",
+        example: "What time is it?",
+        exampleTranslation: "Quelle heure est-il ?",
+        difficulty: "beginner",
+        category: "time"
+    },
+    {
+        id: 30,
+        word: "people",
+        translation: "gens",
+        pronunciation: "/ˈpiːpəl/",
+        partOfSpeech: "noun",
+        definition: "Groupe d'êtres humains",
+        example: "Many people like music.",
+        exampleTranslation: "Beaucoup de gens aiment la musique.",
+        difficulty: "beginner",
+        category: "daily-life"
+    },
+    {
+        id: 31,
+        word: "world",
+        translation: "monde",
+        pronunciation: "/wɜːrld/",
+        partOfSpeech: "noun",
+        definition: "La planète Terre et ses habitants",
+        example: "The world is beautiful.",
+        exampleTranslation: "Le monde est beau.",
+        difficulty: "intermediate",
+        category: "nature"
+    },
+    {
+        id: 32,
+        word: "country",
+        translation: "pays",
+        pronunciation: "/ˈkʌntri/",
+        partOfSpeech: "noun",
+        definition: "Nation ou territoire",
+        example: "France is a beautiful country.",
+        exampleTranslation: "La France est un beau pays.",
+        difficulty: "intermediate",
+        category: "travel"
+    },
+    {
+        id: 33,
+        word: "city",
+        translation: "ville",
+        pronunciation: "/ˈsɪti/",
+        partOfSpeech: "noun",
+        definition: "Grande agglomération urbaine",
+        example: "Paris is a big city.",
+        exampleTranslation: "Paris est une grande ville.",
+        difficulty: "beginner",
+        category: "travel"
+    },
+    {
+        id: 34,
+        word: "love",
+        translation: "amour",
+        pronunciation: "/lʌv/",
+        partOfSpeech: "noun/verb",
+        definition: "Sentiment d'affection profonde",
+        example: "I love my family.",
+        exampleTranslation: "J'aime ma famille.",
+        difficulty: "beginner",
+        category: "emotions"
+    },
+    {
+        id: 35,
+        word: "life",
+        translation: "vie",
+        pronunciation: "/laɪf/",
+        partOfSpeech: "noun",
+        definition: "Existence d'un être vivant",
+        example: "Life is precious.",
+        exampleTranslation: "La vie est précieuse.",
+        difficulty: "beginner",
+        category: "abstract"
+    },
+    {
+        id: 36,
+        word: "computer",
+        translation: "ordinateur",
+        pronunciation: "/kəmˈpjuːtər/",
+        partOfSpeech: "noun",
+        definition: "Machine électronique de calcul",
+        example: "I use my computer for work.",
+        exampleTranslation: "J'utilise mon ordinateur pour travailler.",
+        difficulty: "intermediate",
+        category: "technology"
+    },
+    {
+        id: 37,
+        word: "internet",
+        translation: "internet",
+        pronunciation: "/ˈɪntərnet/",
+        partOfSpeech: "noun",
+        definition: "Réseau mondial d'ordinateurs",
+        example: "The internet connects people worldwide.",
+        exampleTranslation: "Internet connecte les gens du monde entier.",
+        difficulty: "intermediate",
+        category: "technology"
+    },
+    {
+        id: 38,
+        word: "phone",
+        translation: "téléphone",
+        pronunciation: "/foʊn/",
+        partOfSpeech: "noun",
+        definition: "Appareil de communication",
+        example: "My phone is ringing.",
+        exampleTranslation: "Mon téléphone sonne.",
+        difficulty: "beginner",
+        category: "technology"
+    },
+    {
+        id: 39,
+        word: "music",
+        translation: "musique",
+        pronunciation: "/ˈmjuːzɪk/",
+        partOfSpeech: "noun",
+        definition: "Art des sons organisés",
+        example: "I listen to music every day.",
+        exampleTranslation: "J'écoute de la musique tous les jours.",
+        difficulty: "beginner",
+        category: "activities"
+    },
+    {
+        id: 40,
+        word: "sport",
+        translation: "sport",
+        pronunciation: "/spɔːrt/",
+        partOfSpeech: "noun",
+        definition: "Activité physique de compétition",
+        example: "Football is a popular sport.",
+        exampleTranslation: "Le football est un sport populaire.",
+        difficulty: "beginner",
+        category: "activities"
     }
 ];
-
-export const categories = [
-    "greetings",
-    "adjectives",
-    "verbs",
-    "relationships",
-    "abstract",
-    "activities",
-    "emotions",
-    "education",
-    "personality",
-    "communication",
-    "nature",
-    "science",
-    "time"
-];
-
-export const difficulties = ["beginner", "intermediate", "advanced"];

@@ -42,7 +42,7 @@ export class SpacedRepetition {
   // Calcule le prochain intervalle de révision
   getNextInterval(currentInterval, success) {
     const currentIndex = this.intervals.indexOf(currentInterval) || 0;
-    
+
     if (success) {
       // Si réussi, passer au prochain intervalle
       return this.intervals[Math.min(currentIndex + 1, this.intervals.length - 1)];
@@ -55,11 +55,11 @@ export class SpacedRepetition {
   // Détermine si un mot doit être révisé
   shouldReview(lastReviewDate, interval) {
     if (!lastReviewDate) return true;
-    
+
     const daysSinceReview = Math.floor(
       (new Date() - new Date(lastReviewDate)) / (1000 * 60 * 60 * 24)
     );
-    
+
     return daysSinceReview >= interval;
   }
 }
@@ -77,7 +77,7 @@ export class ExerciseGenerator {
     return this.words.filter(word => {
       const wordProgress = this.userProgress.wordsLearned.find(w => w.id === word.id);
       if (!wordProgress) return true; // Nouveau mot
-      
+
       return this.spacedRepetition.shouldReview(
         wordProgress.lastReview,
         wordProgress.interval || 1
@@ -135,6 +135,32 @@ export class ExerciseGenerator {
       correctPairs: selectedWords.map(w => ({ english: w.word, french: w.translation }))
     };
   }
+
+  // Génère un quiz complet avec plusieurs questions
+  generateQuiz(words, numberOfQuestions = 10) {
+    const selectedWords = words
+      .sort(() => Math.random() - 0.5)
+      .slice(0, numberOfQuestions);
+
+    return selectedWords.map(word => {
+      const wrongAnswers = words
+        .filter(w => w.id !== word.id && w.translation !== word.translation)
+        .map(w => w.translation)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3);
+
+      const allAnswers = [word.translation, ...wrongAnswers]
+        .sort(() => Math.random() - 0.5);
+
+      return {
+        question: word.word,
+        answers: allAnswers,
+        correct: word.translation,
+        explanation: word.definition,
+        example: word.example
+      };
+    });
+  }
 }
 
 // Système de points et achievements
@@ -185,8 +211,8 @@ export class AchievementSystem {
   }
 
   checkAchievements(progress) {
-    return this.achievements.filter(achievement => 
-      !progress.achievements.includes(achievement.id) && 
+    return this.achievements.filter(achievement =>
+      !progress.achievements.includes(achievement.id) &&
       achievement.condition(progress)
     );
   }
@@ -292,12 +318,12 @@ export class PerformanceAnalyzer {
   }
 
   analyzePerformance(progress, timeSpent) {
-    const accuracy = progress.totalAnswered > 0 ? 
+    const accuracy = progress.totalAnswered > 0 ?
       (progress.totalScore / progress.totalAnswered) * 100 : 0;
-    
+
     const averageTimePerQuestion = timeSpent / Math.max(progress.totalAnswered, 1);
     const speed = this.calculateSpeedScore(averageTimePerQuestion);
-    
+
     const retention = this.calculateRetentionScore(progress.wordsLearned);
     const consistency = this.calculateConsistencyScore(progress.streakDays);
 
