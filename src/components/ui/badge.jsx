@@ -9,7 +9,7 @@ export function Badge({ children, variant = 'default', className = '', ...props 
 
     return (
         <span
-            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${variants[variant]} ${className}`}
+            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${variant === 'outline' ? className : variants[variant]} ${variant !== 'outline' ? className : ''}`}
             {...props}
         >
             {children}

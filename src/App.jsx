@@ -3,6 +3,76 @@ import { Badge } from './components/ui/badge.jsx'
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card.jsx'
 import { wordsData } from './data/words.js'
 
+// Palettes de couleurs disponibles
+const themes = {
+    classic: {
+        name: "🎨 Classique (Gris)",
+        background: "bg-white",
+        primary: "bg-gray-800 hover:bg-gray-700",
+        secondary: "bg-gray-200 hover:bg-gray-300",
+        text: "text-gray-900",
+        textSecondary: "text-gray-600",
+        card: "border-gray-200",
+        badge: "bg-gray-800 text-white",
+        badgeOutline: "border-gray-600 text-gray-800"
+    },
+    ocean: {
+        name: "🌊 Océan (Bleu)",
+        background: "bg-blue-50",
+        primary: "bg-blue-600 hover:bg-blue-700",
+        secondary: "bg-blue-100 hover:bg-blue-200",
+        text: "text-blue-900",
+        textSecondary: "text-blue-700",
+        card: "border-blue-200",
+        badge: "bg-blue-600 text-white",
+        badgeOutline: "border-blue-600 text-blue-800"
+    },
+    forest: {
+        name: "🌲 Forêt (Vert)",
+        background: "bg-green-50",
+        primary: "bg-green-700 hover:bg-green-800",
+        secondary: "bg-green-100 hover:bg-green-200",
+        text: "text-green-900",
+        textSecondary: "text-green-700",
+        card: "border-green-200",
+        badge: "bg-green-700 text-white",
+        badgeOutline: "border-green-700 text-green-800"
+    },
+    sunset: {
+        name: "🌅 Coucher (Orange)",
+        background: "bg-orange-50",
+        primary: "bg-orange-600 hover:bg-orange-700",
+        secondary: "bg-orange-100 hover:bg-orange-200",
+        text: "text-orange-900",
+        textSecondary: "text-orange-700",
+        card: "border-orange-200",
+        badge: "bg-orange-600 text-white",
+        badgeOutline: "border-orange-600 text-orange-800"
+    },
+    purple: {
+        name: "💜 Mystique (Violet)",
+        background: "bg-purple-50",
+        primary: "bg-purple-600 hover:bg-purple-700",
+        secondary: "bg-purple-100 hover:bg-purple-200",
+        text: "text-purple-900",
+        textSecondary: "text-purple-700",
+        card: "border-purple-200",
+        badge: "bg-purple-600 text-white",
+        badgeOutline: "border-purple-600 text-purple-800"
+    },
+    dark: {
+        name: "🌙 Sombre",
+        background: "bg-gray-900",
+        primary: "bg-gray-600 hover:bg-gray-500",
+        secondary: "bg-gray-700 hover:bg-gray-600",
+        text: "text-white",
+        textSecondary: "text-gray-300",
+        card: "border-gray-700 bg-gray-800",
+        badge: "bg-gray-600 text-white",
+        badgeOutline: "border-gray-500 text-gray-200"
+    }
+}
+
 // Service simulé pour la transition vers SQLite
 class MockWordService {
     constructor() {
@@ -60,14 +130,14 @@ class MockWordService {
         // Prendre des mots aléatoires différents du mot correct
         const otherWords = allWords.filter(w => w.id !== correctWord.id);
         const shuffledOthers = [...otherWords];
-        
+
         for (let i = shuffledOthers.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffledOthers[i], shuffledOthers[j]] = [shuffledOthers[j], shuffledOthers[i]];
         }
 
         const options = [correctWord, ...shuffledOthers.slice(0, count - 1)];
-        
+
         // Mélanger les options
         for (let i = options.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -119,7 +189,8 @@ function App() {
     const [totalWords, setTotalWords] = useState(0)
     const [selectedDifficulty, setSelectedDifficulty] = useState('all')
     const [showAnswer, setShowAnswer] = useState(true) // Mode flashcard
-    
+    const [selectedTheme, setSelectedTheme] = useState('classic')
+
     // États pour le mode quiz
     const [mode, setMode] = useState('flashcard') // 'flashcard' ou 'quiz'
     const [quizWords, setQuizWords] = useState([])
@@ -133,6 +204,7 @@ function App() {
     const wordService = new MockWordService()
     const currentWord = words[currentWordIndex]
     const currentQuizWord = quizWords[currentQuizIndex]
+    const theme = themes[selectedTheme] // Thème actuel
 
     // Charger les mots depuis le service
     useEffect(() => {
@@ -172,11 +244,11 @@ function App() {
         setQuizScore(0)
         setCurrentQuizIndex(0)
         setUserAnswers([])
-        
+
         try {
             const quizWordsData = await wordService.getQuizWords(selectedDifficulty, 10)
             setQuizWords(quizWordsData)
-            
+
             if (quizWordsData.length > 0) {
                 generateQuizQuestion(quizWordsData, 0)
             }
@@ -223,7 +295,7 @@ function App() {
 
     const handleQuizAnswer = (selectedOption) => {
         setSelectedAnswer(selectedOption)
-        
+
         const isCorrect = selectedOption.id === currentQuizWord.id
         const newAnswer = {
             question: currentQuizWord,
@@ -231,9 +303,9 @@ function App() {
             correctAnswer: currentQuizWord,
             isCorrect
         }
-        
+
         setUserAnswers([...userAnswers, newAnswer])
-        
+
         if (isCorrect) {
             setQuizScore(quizScore + 1)
         }
@@ -261,10 +333,10 @@ function App() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
+            <div className={`min-h-screen ${theme.background} flex items-center justify-center`}>
                 <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-700 mb-2">Chargement...</div>
-                    <div className="text-gray-500">
+                    <div className={`text-2xl font-bold ${theme.text} mb-2`}>Chargement...</div>
+                    <div className={theme.textSecondary}>
                         {mode === 'quiz' ? 'Préparation du quiz...' : 'Préparation de vos mots'}
                     </div>
                 </div>
@@ -274,29 +346,52 @@ function App() {
 
     if (mode === 'flashcard' && !currentWord) {
         return (
-            <div className="min-h-screen bg-white flex items-center justify-center">
+            <div className={`min-h-screen ${theme.background} flex items-center justify-center`}>
                 <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-700 mb-2">Aucun mot trouvé</div>
-                    <div className="text-gray-500">Essayez un autre filtre</div>
+                    <div className={`text-2xl font-bold ${theme.text} mb-2`}>Aucun mot trouvé</div>
+                    <div className={theme.textSecondary}>Essayez un autre filtre</div>
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-white">
+        <div className={`min-h-screen ${theme.background}`}>
             <div className="container mx-auto p-4 max-w-4xl">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                    <h1 className={`text-4xl font-bold ${theme.text} mb-2`}>
                         EnglishMaster
                     </h1>
-                    <p className="text-gray-600">
+                    <p className={theme.textSecondary}>
                         {mode === 'quiz' ? 'Quiz interactif - 10 questions' : 'Apprenez l\'anglais avec des flashcards interactives'}
                     </p>
-                    <Badge variant="outline" className="mt-2 border-gray-600 text-gray-800">
+                    <Badge variant="outline" className={`mt-2 ${theme.badgeOutline}`}>
                         {mode === 'quiz' ? `Question ${currentQuizIndex + 1}/10` : `v2.0 - ${totalWords} mots disponibles`}
                     </Badge>
+                </div>
+
+                {/* Sélecteur de thème */}
+                <div className="text-center mb-6">
+                    <div className="mb-4">
+                        <label className={`block text-sm font-medium ${theme.textSecondary} mb-2`}>
+                            Choisissez votre thème :
+                        </label>
+                        <div className="flex flex-wrap justify-center gap-2">
+                            {Object.entries(themes).map(([key, themeOption]) => (
+                                <button
+                                    key={key}
+                                    onClick={() => setSelectedTheme(key)}
+                                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${selectedTheme === key
+                                            ? theme.primary + ' text-white'
+                                            : theme.secondary + ' ' + theme.text
+                                        }`}
+                                >
+                                    {themeOption.name}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Sélecteur de mode et filtres */}
@@ -305,8 +400,8 @@ function App() {
                         <button
                             onClick={() => setMode('flashcard')}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'flashcard'
-                                    ? 'bg-gray-800 text-white'
-                                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                ? theme.primary + ' text-white'
+                                : theme.secondary + ' ' + theme.text
                                 }`}
                         >
                             📚 Flashcards
@@ -314,16 +409,14 @@ function App() {
                         <button
                             onClick={startQuiz}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'quiz'
-                                    ? 'bg-gray-800 text-white'
-                                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                ? theme.primary + ' text-white'
+                                : theme.secondary + ' ' + theme.text
                                 }`}
                         >
                             🎯 Quiz (10 questions)
                         </button>
                     </div>
-                </div>
-
-                {/* Filtres de difficulté */}
+                </div>                {/* Filtres de difficulté */}
                 {!quizCompleted && (
                     <div className="flex justify-center gap-2 mb-6">
                         {[
@@ -336,8 +429,8 @@ function App() {
                                 key={level.key}
                                 onClick={() => handleDifficultyChange(level.key)}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedDifficulty === level.key
-                                        ? 'bg-gray-800 text-white'
-                                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                                    ? theme.primary + ' text-white'
+                                    : theme.secondary + ' ' + theme.text
                                     }`}
                             >
                                 {level.label}
@@ -348,15 +441,15 @@ function App() {
 
                 {/* Contenu principal - MODE QUIZ */}
                 {mode === 'quiz' && !quizCompleted && currentQuizWord && (
-                    <Card className="mb-6 max-w-lg mx-auto border-gray-200 shadow-sm">
+                    <Card className={`mb-6 max-w-lg mx-auto ${theme.card} shadow-sm`}>
                         <CardHeader>
-                            <CardTitle className="text-center text-2xl font-bold text-gray-900 mb-2">
+                            <CardTitle className={`text-center text-2xl font-bold ${theme.text} mb-2`}>
                                 Quelle est la traduction de :
                             </CardTitle>
-                            <div className="text-center text-3xl font-bold text-gray-800 mb-2">
+                            <div className={`text-center text-3xl font-bold ${theme.text} mb-2`}>
                                 {currentQuizWord.word}
                             </div>
-                            <div className="text-center text-sm text-gray-500 italic">
+                            <div className={`text-center text-sm ${theme.textSecondary} italic`}>
                                 {currentQuizWord.pronunciation}
                             </div>
                         </CardHeader>
@@ -364,17 +457,17 @@ function App() {
                             <div className="space-y-3">
                                 {quizOptions.map((option, index) => {
                                     let buttonClass = "w-full p-4 text-left rounded-lg border transition-colors "
-                                    
+
                                     if (selectedAnswer) {
                                         if (option.id === currentQuizWord.id) {
                                             buttonClass += "bg-green-100 border-green-500 text-green-800"
                                         } else if (option.id === selectedAnswer.id && option.id !== currentQuizWord.id) {
                                             buttonClass += "bg-red-100 border-red-500 text-red-800"
                                         } else {
-                                            buttonClass += "bg-gray-50 border-gray-200 text-gray-600"
+                                            buttonClass += `${theme.secondary} ${theme.card} ${theme.textSecondary}`
                                         }
                                     } else {
-                                        buttonClass += "bg-white border-gray-200 text-gray-800 hover:bg-gray-50 hover:border-gray-300"
+                                        buttonClass += `${theme.background} ${theme.card} ${theme.text} ${theme.secondary.replace('bg-', 'hover:bg-')}`
                                     }
 
                                     return (
@@ -391,9 +484,9 @@ function App() {
                                     )
                                 })}
                             </div>
-                            
+
                             <div className="mt-6 text-center">
-                                <div className="text-sm text-gray-500">
+                                <div className={`text-sm ${theme.textSecondary}`}>
                                     Score actuel: {quizScore}/{currentQuizIndex + (selectedAnswer ? 1 : 0)}
                                 </div>
                             </div>
@@ -403,37 +496,37 @@ function App() {
 
                 {/* Résultats du Quiz */}
                 {mode === 'quiz' && quizCompleted && (
-                    <Card className="mb-6 max-w-lg mx-auto border-gray-200 shadow-sm">
+                    <Card className={`mb-6 max-w-lg mx-auto ${theme.card} shadow-sm`}>
                         <CardHeader>
-                            <CardTitle className="text-center text-3xl font-bold text-gray-900">
+                            <CardTitle className={`text-center text-3xl font-bold ${theme.text}`}>
                                 Quiz Terminé ! 🎉
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="text-center mb-6">
-                                <div className="text-4xl font-bold text-gray-800 mb-2">
+                                <div className={`text-4xl font-bold ${theme.text} mb-2`}>
                                     {quizScore}/10
                                 </div>
-                                <div className="text-lg text-gray-600 mb-4">
+                                <div className={`text-lg ${theme.textSecondary} mb-4`}>
                                     Score: {Math.round((quizScore / 10) * 100)}%
                                 </div>
-                                <Badge variant="secondary" className="text-sm bg-gray-800 text-white">
-                                    {quizScore >= 8 ? '🏆 Excellent' : 
-                                     quizScore >= 6 ? '👍 Bien' : 
-                                     quizScore >= 4 ? '👌 Correct' : '💪 Continuez !'}
+                                <Badge variant="secondary" className={`text-sm ${theme.badge}`}>
+                                    {quizScore >= 8 ? '🏆 Excellent' :
+                                        quizScore >= 6 ? '👍 Bien' :
+                                            quizScore >= 4 ? '👌 Correct' : '💪 Continuez !'}
                                 </Badge>
                             </div>
 
                             <div className="flex justify-center gap-3 mb-4">
                                 <button
                                     onClick={restartQuiz}
-                                    className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                                    className={`px-6 py-2 ${theme.primary} text-white rounded-lg transition-colors`}
                                 >
                                     🔄 Refaire le quiz
                                 </button>
                                 <button
                                     onClick={backToFlashcards}
-                                    className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                                    className={`px-6 py-2 ${theme.secondary} ${theme.text} rounded-lg transition-colors`}
                                 >
                                     📚 Retour aux flashcards
                                 </button>
@@ -444,37 +537,37 @@ function App() {
 
                 {/* Contenu principal - MODE FLASHCARD */}
                 {mode === 'flashcard' && currentWord && (
-                    <Card className="mb-6 max-w-lg mx-auto border-gray-200 shadow-sm">
+                    <Card className={`mb-6 max-w-lg mx-auto ${theme.card} shadow-sm`}>
                         <CardHeader>
-                            <CardTitle className="text-center text-3xl font-bold text-gray-900">
+                            <CardTitle className={`text-center text-3xl font-bold ${theme.text}`}>
                                 {currentWord.word}
                             </CardTitle>
-                            <div className="text-center text-sm text-gray-500 italic">
+                            <div className={`text-center text-sm ${theme.textSecondary} italic`}>
                                 {currentWord.pronunciation}
                             </div>
                         </CardHeader>
                         <CardContent>
                             {showAnswer ? (
                                 <>
-                                    <div className="text-center text-xl text-gray-700 font-medium mb-4">
+                                    <div className={`text-center text-xl ${theme.text} font-medium mb-4`}>
                                         {currentWord.translation}
                                     </div>
 
                                     {currentWord.definition && (
-                                        <div className="text-center text-sm text-gray-600 mb-3">
+                                        <div className={`text-center text-sm ${theme.textSecondary} mb-3`}>
                                             <strong>Définition:</strong> {currentWord.definition}
                                         </div>
                                     )}
 
                                     {currentWord.example && (
-                                        <div className="text-center text-sm text-gray-600 mb-4">
+                                        <div className={`text-center text-sm ${theme.textSecondary} mb-4`}>
                                             <div className="italic">"{currentWord.example}"</div>
-                                            <div className="text-gray-500">"{currentWord.exampleTranslation}"</div>
+                                            <div className={theme.textSecondary}>"{currentWord.exampleTranslation}"</div>
                                         </div>
                                     )}
 
                                     <div className="flex justify-center mb-4">
-                                        <Badge variant="secondary" className="text-xs bg-gray-800 text-white">
+                                        <Badge variant="secondary" className={`text-xs ${theme.badge}`}>
                                             {currentWord.difficulty === 'beginner' ? 'Débutant' :
                                                 currentWord.difficulty === 'intermediate' ? 'Intermédiaire' :
                                                     currentWord.difficulty === 'advanced' ? 'Avancé' : currentWord.difficulty}
@@ -485,13 +578,13 @@ function App() {
                                     <div className="flex justify-center gap-3">
                                         <button
                                             onClick={() => handleKnowAnswer(false)}
-                                            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                                            className={`px-4 py-2 ${theme.primary} text-white rounded-lg transition-colors text-sm`}
                                         >
                                             ❌ Je ne savais pas
                                         </button>
                                         <button
                                             onClick={() => handleKnowAnswer(true)}
-                                            className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                                            className={`px-4 py-2 ${theme.primary} text-white rounded-lg transition-colors text-sm`}
                                         >
                                             ✅ Je savais !
                                         </button>
@@ -499,12 +592,12 @@ function App() {
                                 </>
                             ) : (
                                 <div className="text-center">
-                                    <div className="text-lg text-gray-500 mb-4">
+                                    <div className={`text-lg ${theme.textSecondary} mb-4`}>
                                         🤔 Connaissez-vous ce mot ?
                                     </div>
                                     <button
                                         onClick={toggleAnswer}
-                                        className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                                        className={`px-6 py-2 ${theme.primary} text-white rounded-lg transition-colors`}
                                     >
                                         Révéler la réponse
                                     </button>
@@ -521,28 +614,28 @@ function App() {
                             <button
                                 onClick={handlePrevious}
                                 disabled={currentWordIndex === 0}
-                                className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                className={`px-6 py-2 ${theme.primary} text-white rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors`}
                             >
                                 ← Précédent
                             </button>
                             <button
                                 onClick={toggleAnswer}
-                                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                                className={`px-6 py-2 ${theme.secondary} ${theme.text} rounded-lg transition-colors`}
                             >
                                 {showAnswer ? '🙈 Cacher' : '👁️ Révéler'}
                             </button>
                             <button
                                 onClick={handleNext}
                                 disabled={currentWordIndex === words.length - 1}
-                                className="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                className={`px-6 py-2 ${theme.primary} text-white rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-colors`}
                             >
                                 Suivant →
                             </button>
                         </div>
 
                         {/* Compteur */}
-                        <div className="text-center text-gray-600">
-                            <Badge variant="outline" className="border-gray-600 text-gray-800">
+                        <div className={`text-center ${theme.textSecondary}`}>
+                            <Badge variant="outline" className={theme.badgeOutline}>
                                 {currentWordIndex + 1} / {words.length}
                             </Badge>
                         </div>
