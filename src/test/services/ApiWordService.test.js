@@ -2,262 +2,262 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { ApiWordService } from '../../services/ApiWordService.js'
 
 describe('ApiWordService', () => {
-  let service
-  let mockFetch
+    let service
+    let mockFetch
 
-  beforeEach(() => {
-    service = new ApiWordService()
-    mockFetch = vi.fn()
-    global.fetch = mockFetch
-  })
+    beforeEach(() => {
+        service = new ApiWordService()
+        mockFetch = vi.fn()
+        global.fetch = mockFetch
+    })
 
-  afterEach(() => {
-    vi.resetAllMocks()
-  })
+    afterEach(() => {
+        vi.resetAllMocks()
+    })
 
-  describe('getAllWords', () => {
-    it('devrait récupérer tous les mots avec succès', async () => {
-      const mockWords = [
-        { id: 1, word: 'hello', translation: 'bonjour', difficulty: 'beginner' },
-        { id: 2, word: 'world', translation: 'monde', difficulty: 'intermediate' }
-      ]
+    describe('getAllWords', () => {
+        it('devrait récupérer tous les mots avec succès', async () => {
+            const mockWords = [
+                { id: 1, word: 'hello', translation: 'bonjour', difficulty: 'beginner' },
+                { id: 2, word: 'world', translation: 'monde', difficulty: 'intermediate' }
+            ]
 
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true,
-          data: mockWords
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true,
+                    data: mockWords
+                })
+            })
+
+            const result = await service.getAllWords()
+
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?')
+            expect(result).toHaveLength(2)
+            expect(result[0]).toMatchObject({
+                id: 1,
+                word: 'hello',
+                translation: 'bonjour'
+            })
         })
-      })
 
-      const result = await service.getAllWords()
+        it('devrait filtrer par difficulté', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true,
+                    data: []
+                })
+            })
 
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?')
-      expect(result).toHaveLength(2)
-      expect(result[0]).toMatchObject({
-        id: 1,
-        word: 'hello',
-        translation: 'bonjour'
-      })
-    })
+            await service.getAllWords('beginner')
 
-    it('devrait filtrer par difficulté', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true,
-          data: []
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?difficulty=beginner')
         })
-      })
 
-      await service.getAllWords('beginner')
+        it('devrait retourner un tableau vide en cas d\'erreur', async () => {
+            mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?difficulty=beginner')
-    })
+            const result = await service.getAllWords()
 
-    it('devrait retourner un tableau vide en cas d\'erreur', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'))
-
-      const result = await service.getAllWords()
-
-      expect(result).toEqual([])
-    })
-
-    it('devrait gérer les erreurs de l\'API', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: false,
-          error: 'Database error'
+            expect(result).toEqual([])
         })
-      })
 
-      const result = await service.getAllWords()
+        it('devrait gérer les erreurs de l\'API', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: false,
+                    error: 'Database error'
+                })
+            })
 
-      expect(result).toEqual([])
-    })
-  })
+            const result = await service.getAllWords()
 
-  describe('getWordById', () => {
-    it('devrait récupérer un mot par ID', async () => {
-      const mockWord = { id: 1, word: 'hello', translation: 'bonjour' }
-
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true,
-          data: mockWord
+            expect(result).toEqual([])
         })
-      })
-
-      const result = await service.getWordById(1)
-
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words/1')
-      expect(result).toMatchObject(mockWord)
     })
 
-    it('devrait retourner null si le mot n\'existe pas', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: false,
-          error: 'Word not found'
+    describe('getWordById', () => {
+        it('devrait récupérer un mot par ID', async () => {
+            const mockWord = { id: 1, word: 'hello', translation: 'bonjour' }
+
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true,
+                    data: mockWord
+                })
+            })
+
+            const result = await service.getWordById(1)
+
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words/1')
+            expect(result).toMatchObject(mockWord)
         })
-      })
 
-      const result = await service.getWordById(999)
+        it('devrait retourner null si le mot n\'existe pas', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: false,
+                    error: 'Word not found'
+                })
+            })
 
-      expect(result).toBeNull()
-    })
-  })
+            const result = await service.getWordById(999)
 
-  describe('searchWords', () => {
-    it('devrait chercher des mots avec une requête', async () => {
-      const mockWords = [
-        { id: 1, word: 'hello', translation: 'bonjour' }
-      ]
-
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true,
-          data: mockWords
+            expect(result).toBeNull()
         })
-      })
-
-      const result = await service.searchWords('hello')
-
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?search=hello')
-      expect(result).toHaveLength(1)
     })
 
-    it('devrait chercher avec filtre de difficulté', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true,
-          data: []
+    describe('searchWords', () => {
+        it('devrait chercher des mots avec une requête', async () => {
+            const mockWords = [
+                { id: 1, word: 'hello', translation: 'bonjour' }
+            ]
+
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true,
+                    data: mockWords
+                })
+            })
+
+            const result = await service.searchWords('hello')
+
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?search=hello')
+            expect(result).toHaveLength(1)
         })
-      })
 
-      await service.searchWords('hello', 'beginner')
+        it('devrait chercher avec filtre de difficulté', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true,
+                    data: []
+                })
+            })
 
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?search=hello&difficulty=beginner')
-    })
-  })
+            await service.searchWords('hello', 'beginner')
 
-  describe('getTotalWordsCount', () => {
-    it('devrait retourner le nombre total de mots', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true,
-          data: { count: 100 }
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words?search=hello&difficulty=beginner')
         })
-      })
-
-      const result = await service.getTotalWordsCount()
-
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words/count?')
-      expect(result).toBe(100)
     })
 
-    it('devrait retourner 0 en cas d\'erreur', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'))
+    describe('getTotalWordsCount', () => {
+        it('devrait retourner le nombre total de mots', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true,
+                    data: { count: 100 }
+                })
+            })
 
-      const result = await service.getTotalWordsCount()
+            const result = await service.getTotalWordsCount()
 
-      expect(result).toBe(0)
-    })
-  })
-
-  describe('generateQuiz', () => {
-    it('devrait générer un quiz', async () => {
-      const mockQuiz = {
-        questions: [
-          {
-            id: 1,
-            word: 'hello',
-            translation: 'bonjour',
-            options: ['bonjour', 'au revoir', 'merci', 'salut'],
-            correctIndex: 0
-          }
-        ]
-      }
-
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true,
-          data: mockQuiz
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words/count?')
+            expect(result).toBe(100)
         })
-      })
 
-      const result = await service.generateQuiz('beginner', 5)
+        it('devrait retourner 0 en cas d\'erreur', async () => {
+            mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/quiz/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ difficulty: 'beginner', count: 5 })
-      })
-      expect(result).toEqual(mockQuiz)
-    })
-  })
+            const result = await service.getTotalWordsCount()
 
-  describe('updateUserProgress', () => {
-    it('devrait mettre à jour le progrès utilisateur', async () => {
-      mockFetch.mockResolvedValueOnce({
-        json: () => Promise.resolve({
-          success: true
+            expect(result).toBe(0)
         })
-      })
-
-      const result = await service.updateUserProgress(1, true)
-
-      expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words/1/progress', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ knows: true })
-      })
-      expect(result).toBe(true)
     })
 
-    it('devrait retourner false en cas d\'erreur', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'))
+    describe('generateQuiz', () => {
+        it('devrait générer un quiz', async () => {
+            const mockQuiz = {
+                questions: [
+                    {
+                        id: 1,
+                        word: 'hello',
+                        translation: 'bonjour',
+                        options: ['bonjour', 'au revoir', 'merci', 'salut'],
+                        correctIndex: 0
+                    }
+                ]
+            }
 
-      const result = await service.updateUserProgress(1, true)
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true,
+                    data: mockQuiz
+                })
+            })
 
-      expect(result).toBe(false)
+            const result = await service.generateQuiz('beginner', 5)
+
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/quiz/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ difficulty: 'beginner', count: 5 })
+            })
+            expect(result).toEqual(mockQuiz)
+        })
     })
-  })
 
-  describe('formatWord', () => {
-    it('devrait formater un mot correctement', () => {
-      const rawWord = {
-        id: 1,
-        word: 'hello',
-        translation: 'bonjour',
-        difficulty: 'beginner',
-        category: 'greetings'
-      }
+    describe('updateUserProgress', () => {
+        it('devrait mettre à jour le progrès utilisateur', async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => Promise.resolve({
+                    success: true
+                })
+            })
 
-      const formatted = service.formatWord(rawWord)
+            const result = await service.updateUserProgress(1, true)
 
-      expect(formatted).toEqual({
-        id: 1,
-        word: 'hello',
-        translation: 'bonjour',
-        difficulty: 'beginner',
-        category: 'greetings'
-      })
+            expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/words/1/progress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ knows: true })
+            })
+            expect(result).toBe(true)
+        })
+
+        it('devrait retourner false en cas d\'erreur', async () => {
+            mockFetch.mockRejectedValueOnce(new Error('Network error'))
+
+            const result = await service.updateUserProgress(1, true)
+
+            expect(result).toBe(false)
+        })
     })
 
-    it('devrait gérer les traductions vides', () => {
-      const rawWord = {
-        id: 1,
-        word: 'hello',
-        translation: '[ ]',
-        difficulty: 'beginner'
-      }
+    describe('formatWord', () => {
+        it('devrait formater un mot correctement', () => {
+            const rawWord = {
+                id: 1,
+                word: 'hello',
+                translation: 'bonjour',
+                difficulty: 'beginner',
+                category: 'greetings'
+            }
 
-      const formatted = service.formatWord(rawWord)
+            const formatted = service.formatWord(rawWord)
 
-      expect(formatted.translation).toBe('[ ]')
+            expect(formatted).toEqual({
+                id: 1,
+                word: 'hello',
+                translation: 'bonjour',
+                difficulty: 'beginner',
+                category: 'greetings'
+            })
+        })
+
+        it('devrait gérer les traductions vides', () => {
+            const rawWord = {
+                id: 1,
+                word: 'hello',
+                translation: '[ ]',
+                difficulty: 'beginner'
+            }
+
+            const formatted = service.formatWord(rawWord)
+
+            expect(formatted.translation).toBe('[ ]')
+        })
     })
-  })
 })
