@@ -57,7 +57,11 @@ export const FlashcardComponent = ({
                             {currentWord.word}
                         </div>
                         <div className={`text-2xl ${theme.text} transition-opacity duration-300 ${showAnswer ? 'opacity-100' : 'opacity-0'}`}>
-                            {showAnswer ? currentWord.translation : 'Cliquez pour voir la traduction'}
+                            {showAnswer ? (
+                                currentWord.translation && currentWord.translation !== '[ ]' && currentWord.translation.trim() !== ''
+                                    ? currentWord.translation
+                                    : '⚠️ Traduction non disponible'
+                            ) : 'Cliquez pour voir la traduction'}
                         </div>
                     </div>
 

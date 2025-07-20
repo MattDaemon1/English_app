@@ -11,29 +11,43 @@
         "migrate": "node migrate.js",
         "migrate:reset": "node migrate.js --reset",
         "server": "node server.js",
-        "dev:full": "concurrently \"npm run server\" \"npm run dev\" --names \"API,CLIENT\" --prefix-colors \"blue,green\""
+        "dev:full": "concurrently \"npm run server\" \"npm run dev\" --names \"API,CLIENT\" --prefix-colors \"blue,green\"",
+        "test": "vitest",
+        "test:run": "vitest run",
+        "test:ui": "vitest --ui",
+        "test:coverage": "vitest run --coverage"
     },
     "dependencies": {
         "better-sqlite3": "^11.10.0",
         "cors": "^2.8.5",
         "express": "^5.1.0",
         "lucide-react": "^0.263.1",
+        "node-fetch": "^3.3.2",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "sqlite3": "^5.1.7"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.3.0",
+        "@testing-library/user-event": "^14.6.1",
         "@types/react": "^18.2.15",
         "@types/react-dom": "^18.2.7",
         "@vitejs/plugin-react": "^4.0.3",
+        "@vitest/coverage-v8": "^3.2.4",
+        "@vitest/ui": "^3.2.4",
         "autoprefixer": "^10.4.21",
         "concurrently": "^9.2.0",
         "eslint": "^8.45.0",
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.6.0",
         "eslint-plugin-react-refresh": "^0.4.3",
+        "happy-dom": "^17.6.1",
+        "jest": "^30.0.4",
+        "jsdom": "^26.1.0",
         "postcss": "^8.5.6",
         "tailwindcss": "^4.1.11",
-        "vite": "^4.4.5"
+        "vite": "^4.4.5",
+        "vitest": "^3.2.4"
     }
 }
