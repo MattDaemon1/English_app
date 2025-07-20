@@ -7,11 +7,23 @@ import { useQuiz } from './hooks/useQuiz.js'
 import { QuizComponent } from './components/Quiz/QuizComponent.jsx'
 import { FlashcardComponent } from './components/Flashcard/FlashcardComponent.jsx'
 import { AppHeader } from './components/AppHeader/AppHeader.jsx'
+import { AuthProvider, useAuth } from './hooks/useAuth.js'
+import { LoginForm } from './components/Auth/LoginForm.jsx'
+import { AdminPanel } from './components/Admin/AdminPanel.jsx'
+import { UserProfile } from './components/User/UserProfile.jsx'
 
-function App() {
+function AppContent() {
     // États globaux
     const [selectedDifficulty, setSelectedDifficulty] = useState('all')
     const [selectedTheme, setSelectedTheme] = useState('classic')
+
+    // États UI
+    const [showLogin, setShowLogin] = useState(false)
+    const [showAdmin, setShowAdmin] = useState(false)
+    const [showProfile, setShowProfile] = useState(false)
+
+    // Auth
+    const { currentUser, isAuthenticated, loading: authLoading, logout, markWordAsLearned, addPoints, isAdmin } = useAuth()
 
     // Hooks personnalisés
     const {
@@ -24,7 +36,7 @@ function App() {
         handleNext,
         handlePrevious,
         toggleAnswer,
-        handleKnowAnswer
+        handleKnowAnswer: originalHandleKnowAnswer
     } = useWords(selectedDifficulty, 'flashcard') // Toujours en mode flashcard pour useWords
 
     const {
@@ -44,8 +56,17 @@ function App() {
 
     const theme = themes[selectedTheme] // Thème actuel
 
-    // Gestion du changement de difficulté et mode
+    // Gestion améliorée des mots appris avec points
+    const handleKnowAnswer = (knew) => {
+        originalHandleKnowAnswer(knew);
 
+        if (isAuthenticated && knew) {
+            // Marquer le mot comme appris et gagner des points
+            markWordAsLearned();
+        }
+    };
+
+    // Gestion du changement de difficulté et mode
     const handleStartQuiz = () => {
         startQuiz()
     }
@@ -120,8 +141,72 @@ function App() {
                         {isQuizMode ? '🎯 Quiz interactif - Testez vos connaissances' : '📚 Apprenez l\'anglais avec des flashcards interactives'}
                     </p>
                     <Badge variant="outline" className={`${theme.badgeOutline} text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1 sm:py-2 rounded-full shadow-lg`}>
-                        {isQuizMode ? `Question ${currentQuizIndex + 1}/10` : `v2.0 - ${totalWords} mots disponibles`}
+                        {isQuizMode ? `Question ${currentQuizIndex + 1}/10` : `v2.1 - ${totalWords} mots disponibles`}
                     </Badge>
+                </div>
+
+                {/* Système d'utilisateurs */}
+                <div className="flex justify-center mb-6 sm:mb-8 animate-slideIn">
+                    <div className={`${theme.cardBackground} rounded-xl p-4 shadow-lg max-w-md w-full mx-4`}>
+                        {!isAuthenticated ? (
+                            <div className="text-center space-y-3">
+                                <div className={`${theme.text} font-semibold flex items-center justify-center gap-2`}>
+                                    👤 Mode Invité
+                                </div>
+                                <div className={`${theme.textSecondary} text-sm`}>
+                                    Connectez-vous pour sauvegarder vos progrès et débloquer des badges !
+                                </div>
+                                <button
+                                    onClick={() => setShowLogin(true)}
+                                    className={`w-full ${getThemeClasses(theme, 'button-primary-solid')} text-sm`}
+                                >
+                                    🔐 Se connecter
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="text-center space-y-3">
+                                <div className="flex items-center justify-center gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold">
+                                        {currentUser?.profile?.avatar?.initials || currentUser?.username?.[0]?.toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <div className={`${theme.text} font-semibold text-sm`}>
+                                            {currentUser?.profile?.firstName || currentUser?.username}
+                                            {isAdmin() && ' 👑'}
+                                        </div>
+                                        <div className={`${theme.textSecondary} text-xs flex items-center gap-2`}>
+                                            📚 {currentUser?.stats?.wordsLearned || 0} mots
+                                            ⭐ {currentUser?.stats?.totalPoints || 0} pts
+                                            🔥 {currentUser?.stats?.streakDays || 0}j
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap gap-2 justify-center">
+                                    <button
+                                        onClick={() => setShowProfile(true)}
+                                        className={`px-3 py-1 text-xs ${getThemeClasses(theme, 'button-secondary')}`}
+                                    >
+                                        👤 Profil
+                                    </button>
+                                    {isAdmin() && (
+                                        <button
+                                            onClick={() => setShowAdmin(true)}
+                                            className={`px-3 py-1 text-xs ${getThemeClasses(theme, 'button-secondary')}`}
+                                        >
+                                            👑 Admin
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={logout}
+                                        className={`px-3 py-1 text-xs ${theme.textSecondary} hover:${theme.text} transition-colors`}
+                                    >
+                                        🚪 Déconnexion
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Sélecteur de thème amélioré */}
@@ -398,8 +483,39 @@ function App() {
                     </>
                 )}
             </div>
+
+            {/* Modales */}
+            {showLogin && (
+                <LoginForm
+                    theme={theme}
+                    onClose={() => setShowLogin(false)}
+                />
+            )}
+
+            {showAdmin && isAdmin() && (
+                <AdminPanel
+                    theme={theme}
+                    onClose={() => setShowAdmin(false)}
+                />
+            )}
+
+            {showProfile && isAuthenticated && (
+                <UserProfile
+                    theme={theme}
+                    onClose={() => setShowProfile(false)}
+                />
+            )}
         </div>
     )
+}
+
+// Composant App principal avec AuthProvider
+function App() {
+    return (
+        <AuthProvider>
+            <AppContent />
+        </AuthProvider>
+    );
 }
 
 export default App
