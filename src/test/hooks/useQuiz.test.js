@@ -12,7 +12,7 @@ vi.mock('../../services/ApiWordService.js', () => ({
 describe('useQuiz', () => {
     let mockService
 
-    beforeEach(() => {
+    beforeEach(async () => {
         const { getApiService } = await import('../../services/ApiWordService.js')
         mockService = getApiService()
         vi.clearAllMocks()

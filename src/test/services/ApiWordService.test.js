@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { ApiWordService } from '../../services/ApiWordService.js'
+import ApiWordService from '../../services/ApiWordService.js'
 
 describe('ApiWordService', () => {
     let service

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { FlashcardComponent } from '../../components/Flashcard/FlashcardComponent.jsx'
 
@@ -72,7 +72,7 @@ describe('FlashcardComponent', () => {
 
             expect(screen.getByText('hello')).toBeInTheDocument()
             expect(screen.queryByText('bonjour')).not.toBeInTheDocument()
-            expect(screen.getByText('Cliquez pour révéler la traduction')).toBeInTheDocument()
+            expect(screen.getByText('Cliquez pour voir la traduction')).toBeInTheDocument()
         })
 
         it('devrait afficher un message quand aucun mot n\'est fourni', () => {
@@ -106,37 +106,37 @@ describe('FlashcardComponent', () => {
     })
 
     describe('interactions', () => {
-        it('devrait appeler onToggleAnswer quand on clique sur "Révéler"', () => {
+        it('devrait appeler onToggleAnswer quand on clique sur la zone de traduction', () => {
             render(<FlashcardComponent {...defaultProps} showAnswer={false} />)
 
-            const revealButton = screen.getByText('Révéler la traduction')
-            fireEvent.click(revealButton)
+            const translationArea = screen.getByText('Cliquez pour voir la traduction')
+            fireEvent.click(translationArea.closest('div'))
 
             expect(defaultProps.onToggleAnswer).toHaveBeenCalledTimes(1)
         })
 
-        it('devrait appeler onToggleAnswer quand on clique sur "Masquer"', () => {
+        it('devrait appeler onToggleAnswer quand on clique sur la zone avec réponse visible', () => {
             render(<FlashcardComponent {...defaultProps} showAnswer={true} />)
 
-            const hideButton = screen.getByText('Masquer la traduction')
-            fireEvent.click(hideButton)
+            const translationArea = screen.getByText('bonjour')
+            fireEvent.click(translationArea.closest('div'))
 
             expect(defaultProps.onToggleAnswer).toHaveBeenCalledTimes(1)
         })
 
-        it('devrait appeler onKnowAnswer(true) quand on clique sur "Je le sais"', () => {
+        it('devrait appeler onKnowAnswer(true) quand on clique sur "Je sais"', () => {
             render(<FlashcardComponent {...defaultProps} />)
 
-            const knowButton = screen.getByText('Je le sais ✅')
+            const knowButton = screen.getByText('✅ Je sais')
             fireEvent.click(knowButton)
 
             expect(defaultProps.onKnowAnswer).toHaveBeenCalledWith(true)
         })
 
-        it('devrait appeler onKnowAnswer(false) quand on clique sur "Je ne le sais pas"', () => {
+        it('devrait appeler onKnowAnswer(false) quand on clique sur "Je ne sais pas"', () => {
             render(<FlashcardComponent {...defaultProps} />)
 
-            const dontKnowButton = screen.getByText('Je ne le sais pas ❌')
+            const dontKnowButton = screen.getByText('❌ Je ne sais pas')
             fireEvent.click(dontKnowButton)
 
             expect(defaultProps.onKnowAnswer).toHaveBeenCalledWith(false)
@@ -145,7 +145,7 @@ describe('FlashcardComponent', () => {
         it('devrait appeler onPrevious quand on clique sur "Précédent"', () => {
             render(<FlashcardComponent {...defaultProps} />)
 
-            const prevButton = screen.getByText('Précédent')
+            const prevButton = screen.getByText('← Précédent')
             fireEvent.click(prevButton)
 
             expect(defaultProps.onPrevious).toHaveBeenCalledTimes(1)
@@ -154,7 +154,7 @@ describe('FlashcardComponent', () => {
         it('devrait appeler onNext quand on clique sur "Suivant"', () => {
             render(<FlashcardComponent {...defaultProps} />)
 
-            const nextButton = screen.getByText('Suivant')
+            const nextButton = screen.getByText('Suivant →')
             fireEvent.click(nextButton)
 
             expect(defaultProps.onNext).toHaveBeenCalledTimes(1)
@@ -165,22 +165,22 @@ describe('FlashcardComponent', () => {
         it('devrait désactiver le bouton "Précédent" au premier mot', () => {
             render(<FlashcardComponent {...defaultProps} currentWordIndex={0} />)
 
-            const prevButton = screen.getByText('Précédent')
+            const prevButton = screen.getByText('← Précédent')
             expect(prevButton.closest('button')).toBeDisabled()
         })
 
         it('devrait désactiver le bouton "Suivant" au dernier mot', () => {
             render(<FlashcardComponent {...defaultProps} currentWordIndex={9} totalWords={10} />)
 
-            const nextButton = screen.getByText('Suivant')
+            const nextButton = screen.getByText('Suivant →')
             expect(nextButton.closest('button')).toBeDisabled()
         })
 
         it('devrait activer les deux boutons au milieu de la liste', () => {
             render(<FlashcardComponent {...defaultProps} currentWordIndex={5} totalWords={10} />)
 
-            const prevButton = screen.getByText('Précédent')
-            const nextButton = screen.getByText('Suivant')
+            const prevButton = screen.getByText('← Précédent')
+            const nextButton = screen.getByText('Suivant →')
 
             expect(prevButton.closest('button')).not.toBeDisabled()
             expect(nextButton.closest('button')).not.toBeDisabled()

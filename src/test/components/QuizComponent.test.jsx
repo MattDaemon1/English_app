@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { QuizComponent } from '../../components/Quiz/QuizComponent.jsx'
 
@@ -64,7 +64,7 @@ describe('QuizComponent', () => {
         it('devrait afficher le compteur de progression', () => {
             render(<QuizComponent {...defaultProps} />)
 
-            expect(screen.getByText('1 / 10')).toBeInTheDocument()
+            expect(screen.getByText('Question 1/10')).toBeInTheDocument()
         })
 
         it('devrait afficher le score actuel', () => {
@@ -88,7 +88,7 @@ describe('QuizComponent', () => {
             const choices = screen.getAllByRole('button')
             const selectedChoice = choices[1] // 'au revoir'
 
-            expect(selectedChoice).toHaveClass('ring-2')
+            expect(selectedChoice).toHaveClass('bg-red-500')
         })
     })
 
@@ -179,19 +179,19 @@ describe('QuizComponent', () => {
         it('devrait afficher la progression correcte', () => {
             render(<QuizComponent {...defaultProps} currentQuizIndex={4} />)
 
-            expect(screen.getByText('5 / 10')).toBeInTheDocument()
+            expect(screen.getByText('Question 5/10')).toBeInTheDocument()
         })
 
         it('devrait afficher la progression à la dernière question', () => {
             render(<QuizComponent {...defaultProps} currentQuizIndex={9} />)
 
-            expect(screen.getByText('10 / 10')).toBeInTheDocument()
+            expect(screen.getByText('Question 10/10')).toBeInTheDocument()
         })
 
         it('devrait gérer un nombre total de questions personnalisé', () => {
             render(<QuizComponent {...defaultProps} totalQuestions={5} currentQuizIndex={2} />)
 
-            expect(screen.getByText('3 / 5')).toBeInTheDocument()
+            expect(screen.getByText('Question 3/5')).toBeInTheDocument()
             expect(screen.getByText('Score: 0/5')).toBeInTheDocument()
         })
     })
@@ -211,7 +211,7 @@ describe('QuizComponent', () => {
             const choices = screen.getAllByRole('button')
             const selectedChoice = choices[0]
 
-            expect(selectedChoice).toHaveClass('ring-2')
+            expect(selectedChoice).toHaveClass('bg-green-500')
         })
     })
 
