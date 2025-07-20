@@ -33,7 +33,7 @@ EnglishMaster est une application web interactive conçue pour aider les francop
 - npm ou yarn
 
 ### Installation
-```bash
+
 # Cloner le projet (si nécessaire)
 cd english-learning-app
 
@@ -42,7 +42,7 @@ npm install
 
 # Lancer l'application en mode développement
 npm run dev
-```
+
 
 L'application sera accessible à l'adresse : `http://localhost:5173`
 
