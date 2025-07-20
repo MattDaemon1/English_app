@@ -93,7 +93,10 @@ function App() {
     }
 
     return (
-        <div className={`min-h-screen ${theme.background} relative overflow-hidden`}>
+        <div
+            className={`min-h-screen ${theme.background} relative overflow-hidden`}
+            style={{ backgroundColor: selectedTheme === 'classic' ? '#FAF8F6' : undefined }}
+        >
             {/* Éléments décoratifs de fond */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute -top-20 -right-20 md:-top-40 md:-right-40 w-40 h-40 md:w-80 md:h-80 bg-white/10 rounded-full blur-3xl"></div>
