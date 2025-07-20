@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MockWordService } from '../services/MockWordService.js';
+import { getApiService } from '../services/ApiWordService.js';
 
 export const useWords = (selectedDifficulty, mode) => {
     const [words, setWords] = useState([]);
@@ -8,7 +8,7 @@ export const useWords = (selectedDifficulty, mode) => {
     const [totalWords, setTotalWords] = useState(0);
     const [showAnswer, setShowAnswer] = useState(true);
 
-    const wordService = new MockWordService();
+    const wordService = getApiService();
     const currentWord = words[currentWordIndex];
 
     useEffect(() => {
@@ -20,16 +20,8 @@ export const useWords = (selectedDifficulty, mode) => {
     const loadWords = async () => {
         setLoading(true);
         try {
-            const options = {
-                limit: 50,
-                offset: 0,
-                difficulty: selectedDifficulty === 'all' ? null : selectedDifficulty
-            };
-
-            const wordsData = await wordService.getWords(options);
-            const count = await wordService.getWordsCount({
-                difficulty: selectedDifficulty === 'all' ? null : selectedDifficulty
-            });
+            const wordsData = await wordService.getAllWords(selectedDifficulty);
+            const count = await wordService.getTotalWordsCount(selectedDifficulty);
 
             setWords(wordsData);
             setTotalWords(count);
@@ -60,6 +52,13 @@ export const useWords = (selectedDifficulty, mode) => {
     };
 
     const handleKnowAnswer = async (knows) => {
+        if (currentWord) {
+            try {
+                await wordService.updateUserProgress(currentWord.id, knows);
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde du progrès:', error);
+            }
+        }
         handleNext();
     };
 
