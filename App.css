@@ -5,6 +5,154 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Améliorations responsives pour EnglishMaster */
+@layer utilities {
+
+  /* Largeurs adaptatives pour boutons */
+  .btn-auto {
+    width: auto;
+    min-width: fit-content;
+  }
+
+  .btn-mobile {
+    @apply w-auto min-w-[120px] sm:min-w-[140px];
+  }
+
+  /* Containers responsives */
+  .container-mobile {
+    @apply max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl;
+  }
+
+  .container-content {
+    @apply max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl;
+  }
+
+  /* Grids adaptatifs */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .flex-responsive {
+    @apply flex flex-wrap justify-center items-center;
+  }
+
+  /* Espacement amélioré */
+  .gap-responsive {
+    @apply gap-2 sm:gap-3 lg:gap-4;
+  }
+
+  .padding-responsive {
+    @apply p-3 sm:p-4 lg:p-6;
+  }
+
+  .margin-responsive {
+    @apply m-2 sm:m-3 lg:m-4;
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Espacement adaptatif */
+  .responsive-padding {
+    @apply px-3 sm:px-4 md:px-6;
+  }
+
+  .responsive-margin {
+    @apply mx-2 sm:mx-4 md:mx-6;
+  }
+
+  /* Texte adaptatif */
+  .responsive-text-sm {
+    @apply text-xs sm:text-sm;
+  }
+
+  .responsive-text-base {
+    @apply text-sm sm:text-base;
+  }
+
+  .responsive-text-lg {
+    @apply text-base sm:text-lg;
+  }
+
+  .responsive-text-xl {
+    @apply text-lg sm:text-xl md:text-2xl;
+  }
+
+  .responsive-text-2xl {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  .responsive-text-3xl {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  /* Boutons responsives */
+  .responsive-button {
+    @apply px-3 py-2 sm:px-4 sm:py-2 md:px-6 md:py-3;
+    @apply text-xs sm:text-sm md:text-base;
+    @apply min-h-[44px] sm:min-h-[auto];
+  }
+
+  /* Cartes responsives */
+  .responsive-card {
+    @apply p-4 sm:p-6;
+    @apply mx-2 sm:mx-4;
+    @apply mb-4 sm:mb-6;
+  }
+
+  /* Amélioration des gaps */
+  .responsive-gap {
+    @apply gap-2 sm:gap-3 md:gap-4;
+  }
+
+  /* Animation d'apparition pour mobile */
+  .mobile-fade-in {
+    animation: mobile-fade-in 0.3s ease-in-out;
+  }
+
+  @keyframes mobile-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Amélioration des focus pour navigation au clavier */
+  .focus-ring {
+    @apply focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:outline-none;
+  }
+
+  /* Scrollbar personnalisée pour webkit */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(203 213 225) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgb(203 213 225);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(148 163 184);
+  }
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
