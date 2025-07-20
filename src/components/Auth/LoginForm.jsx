@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.jsx';
-import { useAuth } from '../../hooks/useAuth.js';
+import { useAuth } from '../../hooks/useAuth.jsx';
 import { getThemeClasses } from '../../themes/index.js';
 
 export const LoginForm = ({ theme, onClose }) => {

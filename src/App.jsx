@@ -4,10 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card.j
 import { themes, getThemeClasses } from './themes/index.js'
 import { useWords } from './hooks/useWords.js'
 import { useQuiz } from './hooks/useQuiz.js'
-import { QuizComponent } from './components/Quiz/QuizComponent.jsx'
-import { FlashcardComponent } from './components/Flashcard/FlashcardComponent.jsx'
-import { AppHeader } from './components/AppHeader/AppHeader.jsx'
-import { AuthProvider, useAuth } from './hooks/useAuth.js'
+import { AuthProvider, useAuth } from './hooks/useAuth.jsx'
 import { LoginForm } from './components/Auth/LoginForm.jsx'
 import { AdminPanel } from './components/Admin/AdminPanel.jsx'
 import { UserProfile } from './components/User/UserProfile.jsx'
@@ -23,7 +20,7 @@ function AppContent() {
     const [showProfile, setShowProfile] = useState(false)
 
     // Auth
-    const { currentUser, isAuthenticated, loading: authLoading, logout, markWordAsLearned, addPoints, isAdmin } = useAuth()
+    const { currentUser, isAuthenticated, logout, markWordAsLearned, isAdmin } = useAuth()
 
     // Hooks personnalisés
     const {

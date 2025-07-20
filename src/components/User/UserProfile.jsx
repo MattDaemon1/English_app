@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.jsx';
 import { Badge } from '../ui/badge.jsx';
-import { useAuth } from '../../hooks/useAuth.js';
+import { useAuth } from '../../hooks/useAuth.jsx';
 import { getThemeClasses } from '../../themes/index.js';
 
 export const UserProfile = ({ theme, onClose }) => {
@@ -219,8 +219,8 @@ export const UserProfile = ({ theme, onClose }) => {
                                 key={tab.key}
                                 onClick={() => setActiveTab(tab.key)}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key
-                                        ? getThemeClasses(theme, 'button-primary-solid')
-                                        : getThemeClasses(theme, 'button-secondary')
+                                    ? getThemeClasses(theme, 'button-primary-solid')
+                                    : getThemeClasses(theme, 'button-secondary')
                                     }`}
                             >
                                 {tab.label}
