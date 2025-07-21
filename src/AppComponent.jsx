@@ -10,12 +10,15 @@ import './App.css'
 function AppContent() {
     const [selectedDifficulty, setSelectedDifficulty] = useState('beginner')
     const [selectedTheme] = useState('classic')
-    const [currentMode, setCurrentMode] = useState('flashcards') // nouveau: mode quiz ou flashcards
+    const [currentMode, setCurrentMode] = useState('flashcards')
     const [showTranslation, setShowTranslation] = useState(false)
     const [wordIndex, setWordIndex] = useState(0)
     const [knownWords, setKnownWords] = useState(new Set())
     const [studySession, setStudySession] = useState({ studied: 0, correct: 0 })
     const [shuffledWords, setShuffledWords] = useState([])
+    const [isAutoPlay, setIsAutoPlay] = useState(false)
+    const [autoPlaySpeed, setAutoPlaySpeed] = useState(3000)
+    const [favorites, setFavorites] = useState(new Set())
     const { currentUser, isAuthenticated } = useAuth()
 
     // Récupération du thème
@@ -49,6 +52,24 @@ function AppContent() {
         }
     }, [allWords, selectedDifficulty])
 
+    // Auto-play functionality
+    useEffect(() => {
+        let interval
+        if (isAutoPlay && shuffledWords.length > 0) {
+            interval = setInterval(() => {
+                setShowTranslation(prev => {
+                    if (prev) {
+                        nextWord()
+                        return false
+                    } else {
+                        return true
+                    }
+                })
+            }, autoPlaySpeed)
+        }
+        return () => clearInterval(interval)
+    }, [isAutoPlay, autoPlaySpeed, shuffledWords])
+
     // Fonctions pour les flashcards améliorées
     const nextWord = () => {
         if (shuffledWords && shuffledWords.length > 0) {
@@ -61,6 +82,29 @@ function AppContent() {
         if (shuffledWords && shuffledWords.length > 0) {
             setWordIndex((prev) => (prev - 1 + shuffledWords.length) % shuffledWords.length)
             setShowTranslation(false)
+        }
+    }
+
+    const toggleFavorite = () => {
+        const currentDisplayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : null
+        if (currentDisplayWord) {
+            const newFavorites = new Set(favorites)
+            if (favorites.has(currentDisplayWord.word)) {
+                newFavorites.delete(currentDisplayWord.word)
+            } else {
+                newFavorites.add(currentDisplayWord.word)
+            }
+            setFavorites(newFavorites)
+        }
+    }
+
+    const speakWord = () => {
+        const currentDisplayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : null
+        if (currentDisplayWord && 'speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(currentDisplayWord.word)
+            utterance.lang = 'en-US'
+            utterance.rate = 0.8
+            speechSynthesis.speak(utterance)
         }
     }
 
@@ -130,6 +174,18 @@ function AppContent() {
                         markAsStudying()
                     }
                     break
+                case 'f':
+                    event.preventDefault()
+                    toggleFavorite()
+                    break
+                case 'p':
+                    event.preventDefault()
+                    speakWord()
+                    break
+                case 'a':
+                    event.preventDefault()
+                    setIsAutoPlay(!isAutoPlay)
+                    break
             }
         }
 
@@ -168,7 +224,10 @@ function AppContent() {
                 {currentMode === 'flashcards' && studySession.studied > 0 && (
                     <Badge variant="success">Session: {studySession.correct}/{studySession.studied}</Badge>
                 )}
-                <p>✅ Base + CSS + Badge + Auth + Words + LoginForm + Quiz 🎯</p>
+                {favorites.size > 0 && (
+                    <Badge variant="info">❤️ Favoris: {favorites.size}</Badge>
+                )}
+                <p>✅ Base + CSS + Badge + Auth + Words + LoginForm + Quiz + Auto-Play 🎯</p>
             </div>
 
             {/* Sélecteur de mode */}
@@ -229,6 +288,40 @@ function AppContent() {
                             <option value="intermediate">🟡 Intermédiaire</option>
                             <option value="advanced">🔴 Avancé</option>
                         </select>
+
+                        <button
+                            onClick={() => setIsAutoPlay(!isAutoPlay)}
+                            style={{
+                                marginLeft: '10px',
+                                padding: '8px 15px',
+                                backgroundColor: isAutoPlay ? '#EF4444' : '#10B981',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            {isAutoPlay ? '⏸️ Pause' : '▶️ Auto'}
+                        </button>
+
+                        {isAutoPlay && (
+                            <select
+                                value={autoPlaySpeed}
+                                onChange={(e) => setAutoPlaySpeed(parseInt(e.target.value))}
+                                style={{
+                                    marginLeft: '10px',
+                                    padding: '8px 12px',
+                                    borderRadius: '6px',
+                                    border: '1px solid #D1D5DB',
+                                    backgroundColor: 'white'
+                                }}
+                            >
+                                <option value={1500}>⚡ Rapide (1.5s)</option>
+                                <option value={3000}>🐾 Normal (3s)</option>
+                                <option value={5000}>🐌 Lent (5s)</option>
+                            </select>
+                        )}
+
                         <button
                             onClick={resetSession}
                             style={{
@@ -421,6 +514,84 @@ function AppContent() {
                                 </div>
                             )}
 
+                            {/* Bouton Favori */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    toggleFavorite()
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '10px',
+                                    left: '15px',
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '20px',
+                                    cursor: 'pointer',
+                                    color: favorites.has(displayWord.word) ? '#EF4444' : '#D1D5DB'
+                                }}
+                            >
+                                ❤️
+                            </button>
+
+                            {/* Bouton Son */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    speakWord()
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '50px',
+                                    left: '15px',
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '20px',
+                                    cursor: 'pointer',
+                                    color: '#6B7280'
+                                }}
+                            >
+                                🔊
+                            </button>
+
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    toggleFavorite()
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '10px',
+                                    left: '15px',
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '20px',
+                                    cursor: 'pointer',
+                                    color: favorites.has(displayWord.word) ? '#EF4444' : '#D1D5DB'
+                                }}
+                            >
+                                ❤️
+                            </button>
+
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    speakWord()
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '50px',
+                                    left: '15px',
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '20px',
+                                    cursor: 'pointer',
+                                    color: '#6B7280'
+                                }}
+                            >
+                                🔊
+                            </button>
+
                             <div style={{ textAlign: 'center' }}>
                                 <h2 style={{
                                     fontSize: '36px',
@@ -570,7 +741,7 @@ function AppContent() {
                             color: '#92400E',
                             textAlign: 'center'
                         }}>
-                            <strong>⌨️ Raccourcis:</strong> ←/→ Navigation • Espace/Enter Révéler • K Je connais • R À revoir
+                            <strong>⌨️ Raccourcis:</strong> ←/→ Navigation • Espace Révéler • K Je connais • R À revoir • F Favori • P Prononcer • A Auto-play
                         </div>
                     </div>
                 )}
