@@ -15,6 +15,7 @@ function AppContent() {
     const [wordIndex, setWordIndex] = useState(0)
     const [knownWords, setKnownWords] = useState(new Set())
     const [studySession, setStudySession] = useState({ studied: 0, correct: 0 })
+    const [shuffledWords, setShuffledWords] = useState([])
     const { currentUser, isAuthenticated } = useAuth()
 
     // Récupération du thème
@@ -28,17 +29,37 @@ function AppContent() {
         allWords
     } = useWords(selectedDifficulty, 'flashcard')
 
+    // Fonction pour mélanger un tableau
+    const shuffleArray = (array) => {
+        const shuffled = [...array]
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        }
+        return shuffled
+    }
+
+    // Effet pour mélanger les mots quand ils changent
+    useEffect(() => {
+        if (allWords && allWords.length > 0) {
+            const shuffled = shuffleArray(allWords)
+            setShuffledWords(shuffled)
+            setWordIndex(0)
+            setShowTranslation(false)
+        }
+    }, [allWords, selectedDifficulty])
+
     // Fonctions pour les flashcards améliorées
     const nextWord = () => {
-        if (allWords && allWords.length > 0) {
-            setWordIndex((prev) => (prev + 1) % allWords.length)
+        if (shuffledWords && shuffledWords.length > 0) {
+            setWordIndex((prev) => (prev + 1) % shuffledWords.length)
             setShowTranslation(false)
         }
     }
 
     const previousWord = () => {
-        if (allWords && allWords.length > 0) {
-            setWordIndex((prev) => (prev - 1 + allWords.length) % allWords.length)
+        if (shuffledWords && shuffledWords.length > 0) {
+            setWordIndex((prev) => (prev - 1 + shuffledWords.length) % shuffledWords.length)
             setShowTranslation(false)
         }
     }
@@ -48,8 +69,9 @@ function AppContent() {
     }
 
     const markAsKnown = () => {
-        if (currentWord) {
-            setKnownWords(prev => new Set([...prev, currentWord.word]))
+        const currentDisplayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : null
+        if (currentDisplayWord) {
+            setKnownWords(prev => new Set([...prev, currentDisplayWord.word]))
             setStudySession(prev => ({ ...prev, studied: prev.studied + 1, correct: prev.correct + 1 }))
             setTimeout(nextWord, 500)
         }
@@ -65,10 +87,15 @@ function AppContent() {
         setKnownWords(new Set())
         setWordIndex(0)
         setShowTranslation(false)
+        // Remélanger les mots
+        if (allWords && allWords.length > 0) {
+            const shuffled = shuffleArray(allWords)
+            setShuffledWords(shuffled)
+        }
     }
 
-    // Mot actuel basé sur l'index
-    const displayWord = allWords && allWords.length > 0 ? allWords[wordIndex] : currentWord
+    // Mot actuel basé sur l'index des mots mélangés
+    const displayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : currentWord
 
     // Raccourcis clavier pour les flashcards
     useEffect(() => {
