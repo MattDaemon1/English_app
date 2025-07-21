@@ -211,23 +211,54 @@ function AppContent() {
 
     return (
         <div className="app-container">
-            <div className="header-section">
-                <h1 className="app-title">🎓 EnglishMaster</h1>
-                <p className="app-subtitle">Application d'apprentissage de l'anglais</p>
-                <Badge variant="premium" size="lg">Version 2.1.0</Badge>
-                <br /><br />
-                {isAuthenticated && <Badge variant="success">Connecté: {currentUser?.username}</Badge>}
-                {!isAuthenticated && <Badge variant="info">Mode Invité</Badge>}
-                <Badge variant="info">Mots: {totalWords}</Badge>
-                {loading && <Badge variant="warning">Chargement...</Badge>}
-                {isQuizMode && <Badge variant="warning">Quiz: {quizScore}/10</Badge>}
-                {currentMode === 'flashcards' && studySession.studied > 0 && (
-                    <Badge variant="success">Session: {studySession.correct}/{studySession.studied}</Badge>
-                )}
-                {favorites.size > 0 && (
-                    <Badge variant="info">❤️ Favoris: {favorites.size}</Badge>
-                )}
-                <p>✅ Base + CSS + Badge + Auth + Words + LoginForm + Quiz + Auto-Play 🎯</p>
+            <div className="header-section" style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <div style={{ marginBottom: '20px' }}>
+                    <h1 className="app-title" style={{
+                        fontSize: '2.5rem',
+                        margin: '0 0 10px 0',
+                        color: '#1F2937',
+                        fontWeight: 'bold'
+                    }}>
+                        🎓 EnglishMaster
+                    </h1>
+                    <p className="app-subtitle" style={{
+                        fontSize: '1.1rem',
+                        color: '#6B7280',
+                        margin: '0 0 15px 0'
+                    }}>
+                        Application d'apprentissage de l'anglais
+                    </p>
+                    <Badge variant="premium" size="lg">Version 2.1.0</Badge>
+                </div>
+
+                <div style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    marginBottom: '15px'
+                }}>
+                    {isAuthenticated && <Badge variant="success">Connecté: {currentUser?.username}</Badge>}
+                    {!isAuthenticated && <Badge variant="info">Mode Invité</Badge>}
+                    <Badge variant="info">Mots: {totalWords}</Badge>
+                    {loading && <Badge variant="warning">Chargement...</Badge>}
+                    {isQuizMode && <Badge variant="warning">Quiz: {quizScore}/10</Badge>}
+                    {currentMode === 'flashcards' && studySession.studied > 0 && (
+                        <Badge variant="success">Session: {studySession.correct}/{studySession.studied}</Badge>
+                    )}
+                    {favorites.size > 0 && (
+                        <Badge variant="info">❤️ Favoris: {favorites.size}</Badge>
+                    )}
+                </div>
+
+                <p style={{
+                    fontSize: '0.9rem',
+                    color: '#059669',
+                    margin: '0',
+                    fontWeight: '500'
+                }}>
+                    ✅ Base + CSS + Badge + Auth + Words + LoginForm + Quiz + Auto-Play 🎯
+                </p>
             </div>
 
             {/* Sélecteur de mode */}
