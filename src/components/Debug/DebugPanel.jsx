@@ -21,7 +21,6 @@ const DebugPanel = ({
         'Loading': loading,
         'Auto Play': isAutoPlay,
         'Show Translation': showTranslation,
-        'Current Word': currentWord?.word || 'none',
         'Display Word': displayWord?.word || 'none'
     };
 

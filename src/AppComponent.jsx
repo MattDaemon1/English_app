@@ -609,7 +609,7 @@ function AppContent() {
                                 <h3>Chargement des mots...</h3>
                             </div>
                         )}
-                        
+
                         {!loading && (!shuffledWords || shuffledWords.length === 0) && (
                             <div style={{ textAlign: 'center', padding: '40px' }}>
                                 <div style={{ fontSize: '48px', marginBottom: '20px' }}>❌</div>
@@ -630,273 +630,273 @@ function AppContent() {
                                 </button>
                             </div>
                         )}
-                        
+
                         {!loading && displayWord && (
-                    <div className="flashcard-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        {/* Carte principale */}
-                        <div
-                            className="flashcard"
-                            onClick={toggleTranslation}
-                            style={{
-                                border: knownWords.has(displayWord.word) ? '3px solid #10B981' : '2px solid #2563EB',
-                                borderRadius: '16px',
-                                padding: '40px',
-                                margin: '20px 0',
-                                backgroundColor: knownWords.has(displayWord.word) ? '#ECFDF5' : '#EFF6FF',
-                                cursor: 'pointer',
-                                minWidth: '400px',
-                                minHeight: '200px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                transition: 'all 0.3s ease',
-                                boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
-                                position: 'relative'
-                            }}
-                        >
-                            {knownWords.has(displayWord.word) && (
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '10px',
-                                    right: '15px',
-                                    color: '#10B981',
-                                    fontSize: '20px'
-                                }}>
-                                    ✅
-                                </div>
-                            )}
+                            <div className="flashcard-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                {/* Carte principale */}
+                                <div
+                                    className="flashcard"
+                                    onClick={toggleTranslation}
+                                    style={{
+                                        border: knownWords.has(displayWord.word) ? '3px solid #10B981' : '2px solid #2563EB',
+                                        borderRadius: '16px',
+                                        padding: '40px',
+                                        margin: '20px 0',
+                                        backgroundColor: knownWords.has(displayWord.word) ? '#ECFDF5' : '#EFF6FF',
+                                        cursor: 'pointer',
+                                        minWidth: '400px',
+                                        minHeight: '200px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        transition: 'all 0.3s ease',
+                                        boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+                                        position: 'relative'
+                                    }}
+                                >
+                                    {knownWords.has(displayWord.word) && (
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            right: '15px',
+                                            color: '#10B981',
+                                            fontSize: '20px'
+                                        }}>
+                                            ✅
+                                        </div>
+                                    )}
 
-                            {/* Bouton Favori */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    toggleFavorite()
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '10px',
-                                    left: '15px',
-                                    background: 'none',
-                                    border: 'none',
-                                    fontSize: '20px',
-                                    cursor: 'pointer',
-                                    color: favorites.has(displayWord.word) ? '#EF4444' : '#D1D5DB'
-                                }}
-                            >
-                                ❤️
-                            </button>
+                                    {/* Bouton Favori */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            toggleFavorite()
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            left: '15px',
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                            color: favorites.has(displayWord.word) ? '#EF4444' : '#D1D5DB'
+                                        }}
+                                    >
+                                        ❤️
+                                    </button>
 
-                            {/* Bouton Son */}
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    speakWord()
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '50px',
-                                    left: '15px',
-                                    background: 'none',
-                                    border: 'none',
-                                    fontSize: '20px',
-                                    cursor: 'pointer',
-                                    color: '#6B7280'
-                                }}
-                            >
-                                🔊
-                            </button>
+                                    {/* Bouton Son */}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            speakWord()
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '50px',
+                                            left: '15px',
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                            color: '#6B7280'
+                                        }}
+                                    >
+                                        🔊
+                                    </button>
 
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    toggleFavorite()
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '10px',
-                                    left: '15px',
-                                    background: 'none',
-                                    border: 'none',
-                                    fontSize: '20px',
-                                    cursor: 'pointer',
-                                    color: favorites.has(displayWord.word) ? '#EF4444' : '#D1D5DB'
-                                }}
-                            >
-                                ❤️
-                            </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            toggleFavorite()
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '10px',
+                                            left: '15px',
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                            color: favorites.has(displayWord.word) ? '#EF4444' : '#D1D5DB'
+                                        }}
+                                    >
+                                        ❤️
+                                    </button>
 
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    speakWord()
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: '50px',
-                                    left: '15px',
-                                    background: 'none',
-                                    border: 'none',
-                                    fontSize: '20px',
-                                    cursor: 'pointer',
-                                    color: '#6B7280'
-                                }}
-                            >
-                                🔊
-                            </button>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            speakWord()
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '50px',
+                                            left: '15px',
+                                            background: 'none',
+                                            border: 'none',
+                                            fontSize: '20px',
+                                            cursor: 'pointer',
+                                            color: '#6B7280'
+                                        }}
+                                    >
+                                        🔊
+                                    </button>
 
-                            <div style={{ textAlign: 'center' }}>
-                                <h2 style={{
-                                    fontSize: '36px',
-                                    color: knownWords.has(displayWord.word) ? '#10B981' : '#2563EB',
-                                    marginBottom: '20px',
-                                    fontWeight: '600'
-                                }}>
-                                    {displayWord.word}
-                                </h2>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <h2 style={{
+                                            fontSize: '36px',
+                                            color: knownWords.has(displayWord.word) ? '#10B981' : '#2563EB',
+                                            marginBottom: '20px',
+                                            fontWeight: '600'
+                                        }}>
+                                            {displayWord.word}
+                                        </h2>
 
-                                {showTranslation ? (
-                                    <div style={{
-                                        fontSize: '24px',
-                                        color: '#374151',
-                                        fontStyle: 'italic',
-                                        opacity: 0.9
-                                    }}>
-                                        {displayWord.translation}
+                                        {showTranslation ? (
+                                            <div style={{
+                                                fontSize: '24px',
+                                                color: '#374151',
+                                                fontStyle: 'italic',
+                                                opacity: 0.9
+                                            }}>
+                                                {displayWord.translation}
+                                            </div>
+                                        ) : (
+                                            <div style={{
+                                                color: '#6B7280',
+                                                fontSize: '16px',
+                                                fontStyle: 'italic'
+                                            }}>
+                                                Cliquez pour voir la traduction
+                                            </div>
+                                        )}
                                     </div>
-                                ) : (
-                                    <div style={{
-                                        color: '#6B7280',
-                                        fontSize: '16px',
-                                        fontStyle: 'italic'
+                                </div>
+
+                                {/* Contrôles de navigation */}
+                                <div className="flashcard-navigation" style={{
+                                    display: 'flex',
+                                    gap: '15px',
+                                    marginBottom: '20px',
+                                    flexWrap: 'wrap',
+                                    justifyContent: 'center'
+                                }}>
+                                    <button
+                                        onClick={previousWord}
+                                        style={{
+                                            padding: '12px 20px',
+                                            backgroundColor: '#6B7280',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontSize: '16px'
+                                        }}
+                                    >
+                                        ⬅️ Précédent
+                                    </button>
+
+                                    <button
+                                        onClick={toggleTranslation}
+                                        style={{
+                                            padding: '12px 20px',
+                                            backgroundColor: '#2563EB',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontSize: '16px'
+                                        }}
+                                    >
+                                        {showTranslation ? '🙈 Cacher' : '👁️ Révéler'}
+                                    </button>
+
+                                    <button
+                                        onClick={nextWord}
+                                        style={{
+                                            padding: '12px 20px',
+                                            backgroundColor: '#6B7280',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            fontSize: '16px'
+                                        }}
+                                    >
+                                        Suivant ➡️
+                                    </button>
+                                </div>
+
+                                {/* Actions d'apprentissage */}
+                                {showTranslation && (
+                                    <div className="learning-actions" style={{
+                                        display: 'flex',
+                                        gap: '15px',
+                                        marginTop: '10px'
                                     }}>
-                                        Cliquez pour voir la traduction
+                                        <button
+                                            onClick={markAsStudying}
+                                            style={{
+                                                padding: '10px 20px',
+                                                backgroundColor: '#F59E0B',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '8px',
+                                                cursor: 'pointer'
+                                            }}
+                                        >
+                                            📖 À revoir
+                                        </button>
+
+                                        <button
+                                            onClick={markAsKnown}
+                                            disabled={knownWords.has(displayWord.word)}
+                                            style={{
+                                                padding: '10px 20px',
+                                                backgroundColor: knownWords.has(displayWord.word) ? '#9CA3AF' : '#10B981',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '8px',
+                                                cursor: knownWords.has(displayWord.word) ? 'not-allowed' : 'pointer'
+                                            }}
+                                        >
+                                            {knownWords.has(displayWord.word) ? '✅ Maîtrisé' : '🎯 Je connais'}
+                                        </button>
                                     </div>
                                 )}
+
+                                {/* Informations supplémentaires */}
+                                <div style={{
+                                    marginTop: '20px',
+                                    padding: '15px',
+                                    backgroundColor: '#F8FAFC',
+                                    borderRadius: '8px',
+                                    textAlign: 'center',
+                                    fontSize: '14px',
+                                    color: '#64748B'
+                                }}>
+                                    <p>Difficulté: <strong>{selectedDifficulty}</strong></p>
+                                    {studySession.studied > 0 && (
+                                        <p>Progress: {studySession.correct}/{studySession.studied} mots maîtrisés ({Math.round((studySession.correct / studySession.studied) * 100)}%)</p>
+                                    )}
+                                </div>
+
+                                {/* Aide raccourcis clavier */}
+                                <div style={{
+                                    marginTop: '15px',
+                                    padding: '12px',
+                                    backgroundColor: '#FEF3C7',
+                                    borderRadius: '8px',
+                                    fontSize: '12px',
+                                    color: '#92400E',
+                                    textAlign: 'center'
+                                }}>
+                                    <strong>⌨️ Raccourcis:</strong> ←/→ Navigation • Espace Révéler • K Je connais • R À revoir • F Favori • P Prononcer • A Auto-play
+                                </div>
                             </div>
-                        </div>
-
-                        {/* Contrôles de navigation */}
-                        <div className="flashcard-navigation" style={{
-                            display: 'flex',
-                            gap: '15px',
-                            marginBottom: '20px',
-                            flexWrap: 'wrap',
-                            justifyContent: 'center'
-                        }}>
-                            <button
-                                onClick={previousWord}
-                                style={{
-                                    padding: '12px 20px',
-                                    backgroundColor: '#6B7280',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '16px'
-                                }}
-                            >
-                                ⬅️ Précédent
-                            </button>
-
-                            <button
-                                onClick={toggleTranslation}
-                                style={{
-                                    padding: '12px 20px',
-                                    backgroundColor: '#2563EB',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '16px'
-                                }}
-                            >
-                                {showTranslation ? '🙈 Cacher' : '👁️ Révéler'}
-                            </button>
-
-                            <button
-                                onClick={nextWord}
-                                style={{
-                                    padding: '12px 20px',
-                                    backgroundColor: '#6B7280',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    cursor: 'pointer',
-                                    fontSize: '16px'
-                                }}
-                            >
-                                Suivant ➡️
-                            </button>
-                        </div>
-
-                        {/* Actions d'apprentissage */}
-                        {showTranslation && (
-                            <div className="learning-actions" style={{
-                                display: 'flex',
-                                gap: '15px',
-                                marginTop: '10px'
-                            }}>
-                                <button
-                                    onClick={markAsStudying}
-                                    style={{
-                                        padding: '10px 20px',
-                                        backgroundColor: '#F59E0B',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    📖 À revoir
-                                </button>
-
-                                <button
-                                    onClick={markAsKnown}
-                                    disabled={knownWords.has(displayWord.word)}
-                                    style={{
-                                        padding: '10px 20px',
-                                        backgroundColor: knownWords.has(displayWord.word) ? '#9CA3AF' : '#10B981',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        cursor: knownWords.has(displayWord.word) ? 'not-allowed' : 'pointer'
-                                    }}
-                                >
-                                    {knownWords.has(displayWord.word) ? '✅ Maîtrisé' : '🎯 Je connais'}
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Informations supplémentaires */}
-                        <div style={{
-                            marginTop: '20px',
-                            padding: '15px',
-                            backgroundColor: '#F8FAFC',
-                            borderRadius: '8px',
-                            textAlign: 'center',
-                            fontSize: '14px',
-                            color: '#64748B'
-                        }}>
-                            <p>Difficulté: <strong>{selectedDifficulty}</strong></p>
-                            {studySession.studied > 0 && (
-                                <p>Progress: {studySession.correct}/{studySession.studied} mots maîtrisés ({Math.round((studySession.correct / studySession.studied) * 100)}%)</p>
-                            )}
-                        </div>
-
-                        {/* Aide raccourcis clavier */}
-                        <div style={{
-                            marginTop: '15px',
-                            padding: '12px',
-                            backgroundColor: '#FEF3C7',
-                            borderRadius: '8px',
-                            fontSize: '12px',
-                            color: '#92400E',
-                            textAlign: 'center'
-                        }}>
-                            <strong>⌨️ Raccourcis:</strong> ←/→ Navigation • Espace Révéler • K Je connais • R À revoir • F Favori • P Prononcer • A Auto-play
-                        </div>
-                    </div>
                         )}
                     </>
                 )}
