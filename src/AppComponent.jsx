@@ -7,11 +7,13 @@ import { useQuiz } from './hooks/useQuiz.js'
 import { useRewards } from './hooks/useRewards.js'
 import { useResponsive } from './hooks/useResponsive.js'
 import useNotifications from './hooks/useNotifications.js'
+import useAdmin from './hooks/useAdmin.js'
 import RewardNotification from './components/Rewards/RewardNotification.jsx'
 import LevelDisplay from './components/Rewards/LevelDisplay.jsx'
 import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
 import AuthButton from './components/Auth/AuthButton.jsx'
 import NotificationSystem from './components/Notifications/NotificationSystem.jsx'
+import AdminDashboard from './components/Admin/AdminDashboard.jsx'
 import './App.css'
 
 function AppContent() {
@@ -27,8 +29,10 @@ function AppContent() {
     const [autoPlaySpeed, setAutoPlaySpeed] = useState(3000)
     const [favorites, setFavorites] = useState(new Set())
     const [answerStartTime, setAnswerStartTime] = useState(null)
+    const [showAdminDashboard, setShowAdminDashboard] = useState(false)
     const { isAuthenticated } = useAuth()
     const { isMobile, isTablet } = useResponsive()
+    const { isAdmin } = useAdmin()
 
     // Système de récompenses
     const { stats, notifications, actions, removeNotification } = useRewards()
@@ -314,6 +318,11 @@ function AppContent() {
                 onRemove={notificationSystem.removeNotification}
             />
 
+            {/* Dashboard Admin */}
+            {showAdminDashboard && (
+                <AdminDashboard onClose={() => setShowAdminDashboard(false)} />
+            )}
+
             {/* Anciennes notifications de récompenses (gardées pour compatibilité) */}
             {notifications.map(notification => (
                 <RewardNotification
@@ -332,13 +341,47 @@ function AppContent() {
                     zIndex: 100,
                     marginBottom: isMobile ? '20px' : '0',
                     display: 'flex',
-                    justifyContent: isMobile ? 'center' : 'flex-end'
+                    justifyContent: isMobile ? 'center' : 'flex-end',
+                    gap: '10px'
                 }}>
                     <AuthButton
                         variant="default"
                         size={isMobile ? "sm" : isTablet ? "md" : "md"}
                         showUserInfo={!isMobile}
                     />
+                    {/* Bouton Dashboard Admin */}
+                    {isAdmin && (
+                        <button
+                            onClick={() => setShowAdminDashboard(true)}
+                            style={{
+                                padding: isMobile ? '8px 12px' : '10px 16px',
+                                backgroundColor: '#7C3AED',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: isMobile ? '12px' : '14px',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                transition: 'all 0.2s ease',
+                                boxShadow: '0 2px 4px rgba(124, 58, 237, 0.2)'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = '#6D28D9'
+                                e.target.style.transform = 'translateY(-1px)'
+                                e.target.style.boxShadow = '0 4px 8px rgba(124, 58, 237, 0.3)'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = '#7C3AED'
+                                e.target.style.transform = 'translateY(0)'
+                                e.target.style.boxShadow = '0 2px 4px rgba(124, 58, 237, 0.2)'
+                            }}
+                        >
+                            🛡️ {!isMobile && 'Dashboard'}
+                        </button>
+                    )}
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
@@ -433,6 +476,20 @@ function AppContent() {
                 >
                     📊 Statistiques
                 </button>
+                {/* Indicateur admin pour les utilisateurs connectés */}
+                {isAdmin && (
+                    <span style={{
+                        marginLeft: '15px',
+                        padding: '5px 10px',
+                        backgroundColor: '#7C3AED',
+                        color: 'white',
+                        borderRadius: '12px',
+                        fontSize: '12px',
+                        fontWeight: '600'
+                    }}>
+                        👑 ADMIN
+                    </span>
+                )}
             </div>
 
             {/* Contrôles pour Flashcards */}

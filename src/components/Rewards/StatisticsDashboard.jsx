@@ -14,6 +14,21 @@ const StatisticsDashboard = ({ stats }) => {
     const unlockedCount = userBadges.length;
     const totalCount = allBadges.length;
 
+    // Fonction pour vérifier si un badge est débloqué
+    const isBadgeUnlocked = (badge) => {
+        return userBadges.some(b => b.id === badge.id);
+    };
+
+    // Fonction pour obtenir le style d'un badge (grisé si non débloqué)
+    const getBadgeStyle = (isUnlocked) => {
+        return {
+            opacity: isUnlocked ? 1 : 0.3,
+            filter: isUnlocked ? 'none' : 'grayscale(100%)',
+            transform: isUnlocked ? 'scale(1)' : 'scale(0.9)',
+            transition: 'all 0.3s ease'
+        };
+    };
+
     return (
         <div className="space-y-6">
             {/* Niveau et XP */}
@@ -71,25 +86,50 @@ const StatisticsDashboard = ({ stats }) => {
 
                 <div className="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-4 mb-4">
                     {allBadges.map(badge => {
-                        const isUnlocked = userBadges.some(b => b.id === badge.id);
+                        const isUnlocked = isBadgeUnlocked(badge);
 
                         return (
-                            <div key={badge.id} className="text-center">
-                                {isUnlocked ? (
-                                    <Badge badge={badge} size="small" />
-                                ) : (
-                                    <div
-                                        className="w-12 h-12 rounded-full border-2 border-gray-300 bg-gray-100 flex items-center justify-center opacity-50"
-                                        title={`${badge.name}: ${badge.description}`}
-                                    >
-                                        <span className="text-lg grayscale">
-                                            {badge.icon}
-                                        </span>
-                                    </div>
-                                )}
-                                <div className="text-xs mt-1 text-gray-600 truncate max-w-full">
+                            <div 
+                                key={badge.id} 
+                                className="text-center"
+                                style={getBadgeStyle(isUnlocked)}
+                            >
+                                <div
+                                    className={`relative group cursor-help transition-transform duration-300 ${
+                                        isUnlocked ? 'hover:scale-110' : 'hover:scale-95'
+                                    }`}
+                                    title={`${badge.name}: ${badge.description}`}
+                                >
+                                    {isUnlocked ? (
+                                        <div className="relative">
+                                            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-2xl shadow-lg border-2 border-yellow-300">
+                                                {badge.icon}
+                                            </div>
+                                            <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                                <span className="text-white text-xs">✓</span>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="relative">
+                                            <div className="w-16 h-16 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center text-2xl">
+                                                <span className="text-gray-400">{badge.icon}</span>
+                                            </div>
+                                            <div className="absolute inset-0 bg-gray-500 bg-opacity-20 rounded-full flex items-center justify-center">
+                                                <span className="text-gray-500 text-lg">🔒</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className={`text-xs mt-2 truncate max-w-full font-medium ${
+                                    isUnlocked ? 'text-gray-800' : 'text-gray-400'
+                                }`}>
                                     {badge.name}
                                 </div>
+                                {!isUnlocked && (
+                                    <div className="text-xs text-gray-400 mt-1">
+                                        Non débloqué
+                                    </div>
+                                )}
                             </div>
                         );
                     })}
