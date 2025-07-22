@@ -17,7 +17,14 @@
         "test": "vitest",
         "test:run": "vitest run",
         "test:ui": "vitest --ui",
-        "test:coverage": "vitest run --coverage"
+        "test:coverage": "vitest run --coverage",
+        "deploy": "node dev-deploy.js",
+        "deploy:watch": "node dev-deploy.js deploy --monitor",
+        "logs": "node dev-deploy.js logs",
+        "app:info": "node dev-deploy.js info",
+        "quick-deploy": "node dev-deploy.js deploy \"Mise à jour rapide\"",
+        "watch:deploy": "node dev-watcher.js",
+        "dev:watch": "concurrently \"npm run server\" \"npm run dev\" \"npm run watch:deploy\" --names \"API,CLIENT,WATCHER\" --prefix-colors \"blue,green,magenta\""
     },
     "dependencies": {
         "better-sqlite3": "^11.10.0",
