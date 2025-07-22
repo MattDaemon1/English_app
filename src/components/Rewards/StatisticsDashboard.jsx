@@ -89,15 +89,14 @@ const StatisticsDashboard = ({ stats }) => {
                         const isUnlocked = isBadgeUnlocked(badge);
 
                         return (
-                            <div 
-                                key={badge.id} 
+                            <div
+                                key={badge.id}
                                 className="text-center"
                                 style={getBadgeStyle(isUnlocked)}
                             >
                                 <div
-                                    className={`relative group cursor-help transition-transform duration-300 ${
-                                        isUnlocked ? 'hover:scale-110' : 'hover:scale-95'
-                                    }`}
+                                    className={`relative group cursor-help transition-transform duration-300 ${isUnlocked ? 'hover:scale-110' : 'hover:scale-95'
+                                        }`}
                                     title={`${badge.name}: ${badge.description}`}
                                 >
                                     {isUnlocked ? (
@@ -120,9 +119,8 @@ const StatisticsDashboard = ({ stats }) => {
                                         </div>
                                     )}
                                 </div>
-                                <div className={`text-xs mt-2 truncate max-w-full font-medium ${
-                                    isUnlocked ? 'text-gray-800' : 'text-gray-400'
-                                }`}>
+                                <div className={`text-xs mt-2 truncate max-w-full font-medium ${isUnlocked ? 'text-gray-800' : 'text-gray-400'
+                                    }`}>
                                     {badge.name}
                                 </div>
                                 {!isUnlocked && (
