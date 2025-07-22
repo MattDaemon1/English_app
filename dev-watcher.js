@@ -48,18 +48,18 @@ function shouldIgnoreFile(filePath) {
 
 function getFileList(dir = '.', files = []) {
     const items = fs.readdirSync(dir);
-    
+
     for (const item of items) {
         const fullPath = path.join(dir, item);
         const stat = fs.statSync(fullPath);
-        
+
         if (stat.isDirectory() && !shouldIgnoreFile(fullPath)) {
             getFileList(fullPath, files);
         } else if (stat.isFile() && !shouldIgnoreFile(fullPath)) {
             // Vérifier si le fichier correspond aux patterns
             const ext = path.extname(fullPath);
             const fileName = path.basename(fullPath);
-            
+
             if (watchPatterns.some(pattern => {
                 if (pattern.includes('**/')) {
                     return fullPath.includes(pattern.replace('**/', '').replace('*', ''));
@@ -73,7 +73,7 @@ function getFileList(dir = '.', files = []) {
             }
         }
     }
-    
+
     return files;
 }
 
@@ -92,25 +92,25 @@ function promptDeploy() {
         log(`⏳ Déploiement en cooldown (${Math.ceil((deployCooldown - (now - lastDeployTime)) / 1000)}s restantes)`, 'yellow');
         return;
     }
-    
+
     log('🚀 Modifications détectées ! Voulez-vous déployer ?', 'cyan');
     log('Tapez "d" + Entrée pour déployer, ou Entrée pour ignorer', 'yellow');
-    
+
     process.stdin.setRawMode(false);
     process.stdin.resume();
-    
+
     const rl = require('readline').createInterface({
         input: process.stdin,
         output: process.stdout
     });
-    
+
     rl.question('> ', (answer) => {
         rl.close();
-        
+
         if (answer.toLowerCase().trim() === 'd') {
             log('🚀 Déploiement en cours...', 'green');
             lastDeployTime = Date.now();
-            
+
             try {
                 execSync('node dev-deploy.js deploy "Auto-deploy par watcher"', { stdio: 'inherit' });
                 log('✅ Déploiement terminé !', 'green');
@@ -120,7 +120,7 @@ function promptDeploy() {
         } else {
             log('⏭️ Déploiement ignoré', 'blue');
         }
-        
+
         log('👀 Surveillance reprise...', 'cyan');
         setTimeout(startWatching, 1000);
     });
@@ -128,31 +128,31 @@ function promptDeploy() {
 
 function startWatching() {
     if (isWatching) return;
-    
+
     isWatching = true;
     log('👀 Démarrage de la surveillance...', 'cyan');
-    
+
     let fileStates = new Map();
     const files = getFileList();
-    
+
     // Initialiser l'état des fichiers
     files.forEach(file => {
         fileStates.set(file.path, file.mtime);
     });
-    
+
     log(`📁 Surveillance de ${files.length} fichiers`, 'blue');
-    
+
     // Vérification périodique
     const checkInterval = setInterval(() => {
         if (!isWatching) {
             clearInterval(checkInterval);
             return;
         }
-        
+
         const currentFiles = getFileList();
         let hasChanges = false;
         let changedFiles = [];
-        
+
         // Vérifier les modifications
         currentFiles.forEach(file => {
             const oldMtime = fileStates.get(file.path);
@@ -162,16 +162,16 @@ function startWatching() {
                 fileStates.set(file.path, file.mtime);
             }
         });
-        
+
         // Vérifier les nouveaux fichiers
         if (currentFiles.length !== fileStates.size) {
             hasChanges = true;
         }
-        
+
         if (hasChanges && checkForChanges()) {
             isWatching = false;
             clearInterval(checkInterval);
-            
+
             log(`📝 Fichiers modifiés: ${changedFiles.join(', ')}`, 'yellow');
             promptDeploy();
         }

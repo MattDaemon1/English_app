@@ -32,7 +32,7 @@ function log(message, color = 'reset') {
 
 function execCommand(command, showOutput = true) {
     try {
-        const result = execSync(command, { 
+        const result = execSync(command, {
             encoding: 'utf8',
             stdio: showOutput ? 'inherit' : 'pipe'
         });
@@ -45,7 +45,7 @@ function execCommand(command, showOutput = true) {
 function checkGitStatus() {
     log('\n🔍 Vérification des modifications Git...', 'cyan');
     const result = execCommand('git status --porcelain', false);
-    
+
     if (result.success && result.output.trim()) {
         log('📝 Modifications détectées:', 'yellow');
         console.log(result.output);
@@ -59,7 +59,7 @@ function checkGitStatus() {
 function runTests() {
     log('\n🧪 Lancement des tests...', 'cyan');
     const result = execCommand('npm run test:run');
-    
+
     if (result.success) {
         log('✅ Tests réussis !', 'green');
         return true;
@@ -72,7 +72,7 @@ function runTests() {
 function buildApp() {
     log('\n🏗️  Build de l\'application...', 'cyan');
     const result = execCommand('npm run build');
-    
+
     if (result.success) {
         log('✅ Build réussi !', 'green');
         return true;
@@ -84,19 +84,19 @@ function buildApp() {
 
 function deployToHeroku(message = 'Déploiement automatique') {
     log('\n🚀 Déploiement sur Heroku...', 'cyan');
-    
+
     // Commit les changements
     execCommand(`git add .`);
     const commitResult = execCommand(`git commit -m "${message}"`);
-    
+
     if (!commitResult.success && !commitResult.error.includes('nothing to commit')) {
         log('❌ Erreur lors du commit', 'red');
         return false;
     }
-    
+
     // Push vers Heroku
     const deployResult = execCommand('git push heroku master');
-    
+
     if (deployResult.success) {
         log('✅ Déploiement réussi !', 'green');
         return true;
@@ -109,11 +109,11 @@ function deployToHeroku(message = 'Déploiement automatique') {
 function monitorLogs() {
     log('\n📊 Surveillance des logs Heroku...', 'cyan');
     log('Appuyez sur Ctrl+C pour arrêter la surveillance', 'yellow');
-    
+
     const logsProcess = spawn('heroku', ['logs', '--tail', '--app', 'englishmaster-learning'], {
         stdio: 'inherit'
     });
-    
+
     logsProcess.on('error', (error) => {
         log(`❌ Erreur lors de la surveillance: ${error.message}`, 'red');
     });
@@ -129,31 +129,31 @@ function showAppInfo() {
 async function main() {
     const args = process.argv.slice(2);
     const command = args[0] || 'deploy';
-    
+
     log('🚀 EnglishMaster - Déploiement Continu', 'bright');
     log('=====================================', 'bright');
-    
+
     switch (command) {
         case 'deploy':
             const hasChanges = checkGitStatus();
-            
+
             if (!hasChanges) {
                 log('\n⚠️  Aucune modification à déployer', 'yellow');
                 showAppInfo();
                 return;
             }
-            
+
             // Tests optionnels (commentés pour le moment)
             // if (!runTests()) {
             //     log('\n❌ Déploiement annulé suite aux tests', 'red');
             //     return;
             // }
-            
+
             if (!buildApp()) {
                 log('\n❌ Déploiement annulé suite au build', 'red');
                 return;
             }
-            
+
             const message = args[1] || `Déploiement auto - ${new Date().toLocaleString()}`;
             if (deployToHeroku(message)) {
                 showAppInfo();
@@ -162,23 +162,23 @@ async function main() {
                 }
             }
             break;
-            
+
         case 'logs':
             monitorLogs();
             break;
-            
+
         case 'info':
             showAppInfo();
             break;
-            
+
         case 'test':
             runTests();
             break;
-            
+
         case 'build':
             buildApp();
             break;
-            
+
         default:
             log('\n📖 Utilisation:', 'yellow');
             log('node dev-deploy.js [command] [options]', 'blue');

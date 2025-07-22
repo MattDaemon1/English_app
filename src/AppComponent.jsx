@@ -4,7 +4,11 @@ import { themes } from './themes/index.js'
 import { AuthProvider, useAuth } from './hooks/useAuth.jsx'
 import { useWords } from './hooks/useWords.js'
 import { useQuiz } from './hooks/useQuiz.js'
+import { useRewards } from './hooks/useRewards.js'
 import { LoginForm } from './components/Auth/LoginForm.jsx'
+import RewardNotification from './components/Rewards/RewardNotification.jsx'
+import LevelDisplay from './components/Rewards/LevelDisplay.jsx'
+import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
 import './App.css'
 
 function AppContent() {
@@ -19,7 +23,11 @@ function AppContent() {
     const [isAutoPlay, setIsAutoPlay] = useState(false)
     const [autoPlaySpeed, setAutoPlaySpeed] = useState(3000)
     const [favorites, setFavorites] = useState(new Set())
+    const [answerStartTime, setAnswerStartTime] = useState(null)
     const { currentUser, isAuthenticated } = useAuth()
+
+    // Système de récompenses
+    const { stats, notifications, actions, removeNotification } = useRewards()
 
     // Récupération du thème
     const theme = themes[selectedTheme] || themes.classic
@@ -93,6 +101,10 @@ function AppContent() {
                 newFavorites.delete(currentDisplayWord.word)
             } else {
                 newFavorites.add(currentDisplayWord.word)
+                // Récompense pour ajout aux favoris
+                if (actions) {
+                    actions.favoriteAdded()
+                }
             }
             setFavorites(newFavorites)
         }
@@ -105,24 +117,50 @@ function AppContent() {
             utterance.lang = 'en-US'
             utterance.rate = 0.8
             speechSynthesis.speak(utterance)
+
+            // Récompense pour écoute de prononciation
+            if (actions) {
+                actions.pronunciationListened()
+            }
         }
     }
 
     const toggleTranslation = () => {
+        if (!showTranslation) {
+            // Démarrer le chrono quand on révèle la traduction
+            setAnswerStartTime(Date.now())
+        }
         setShowTranslation(!showTranslation)
     }
 
     const markAsKnown = () => {
         const currentDisplayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : null
         if (currentDisplayWord) {
+            const responseTime = answerStartTime ? Date.now() - answerStartTime : null
+
             setKnownWords(prev => new Set([...prev, currentDisplayWord.word]))
             setStudySession(prev => ({ ...prev, studied: prev.studied + 1, correct: prev.correct + 1 }))
+
+            // Récompenses pour mot maîtrisé
+            if (actions) {
+                actions.wordLearned()
+                actions.correctAnswer(responseTime)
+            }
+
             setTimeout(nextWord, 500)
         }
     }
 
     const markAsStudying = () => {
+        const responseTime = answerStartTime ? Date.now() - answerStartTime : null
+
         setStudySession(prev => ({ ...prev, studied: prev.studied + 1 }))
+
+        // Récompenses pour tentative (même si pas maîtrisé)
+        if (actions) {
+            actions.addXP(1, 'Mot étudié')
+        }
+
         setTimeout(nextWord, 500)
     }
 
@@ -207,10 +245,19 @@ function AppContent() {
         nextQuestion,
         restartQuiz,
         exitQuiz
-    } = useQuiz(selectedDifficulty)
+    } = useQuiz(selectedDifficulty, actions)
 
     return (
         <div className="app-container">
+            {/* Notifications de récompenses */}
+            {notifications.map(notification => (
+                <RewardNotification
+                    key={notification.id}
+                    reward={notification}
+                    onClose={() => removeNotification(notification.id)}
+                />
+            ))}
+
             <div className="header-section" style={{ textAlign: 'center', marginBottom: '30px' }}>
                 <div style={{ marginBottom: '20px' }}>
                     <h1 className="app-title" style={{
@@ -228,8 +275,15 @@ function AppContent() {
                     }}>
                         Application d'apprentissage de l'anglais
                     </p>
-                    <Badge variant="premium" size="lg">Version 2.1.0</Badge>
+                    <Badge variant="premium" size="lg">Version 2.2.0 🏆</Badge>
                 </div>
+
+                {/* Affichage du niveau utilisateur */}
+                {stats && (
+                    <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
+                        <LevelDisplay level={stats.level} stats={stats} compact={true} />
+                    </div>
+                )}
 
                 <div style={{
                     display: 'flex',
@@ -267,7 +321,7 @@ function AppContent() {
                     onClick={() => setCurrentMode('flashcards')}
                     style={{
                         padding: '10px 20px',
-                        margin: '0 10px',
+                        margin: '0 5px',
                         backgroundColor: currentMode === 'flashcards' ? '#2563EB' : '#E5E7EB',
                         color: currentMode === 'flashcards' ? 'white' : '#374151',
                         border: 'none',
@@ -284,7 +338,7 @@ function AppContent() {
                     }}
                     style={{
                         padding: '10px 20px',
-                        margin: '0 10px',
+                        margin: '0 5px',
                         backgroundColor: currentMode === 'quiz' ? '#2563EB' : '#E5E7EB',
                         color: currentMode === 'quiz' ? 'white' : '#374151',
                         border: 'none',
@@ -293,6 +347,20 @@ function AppContent() {
                     }}
                 >
                     🎯 Quiz
+                </button>
+                <button
+                    onClick={() => setCurrentMode('stats')}
+                    style={{
+                        padding: '10px 20px',
+                        margin: '0 5px',
+                        backgroundColor: currentMode === 'stats' ? '#2563EB' : '#E5E7EB',
+                        color: currentMode === 'stats' ? 'white' : '#374151',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    📊 Statistiques
                 </button>
             </div>
 
@@ -774,6 +842,13 @@ function AppContent() {
                         }}>
                             <strong>⌨️ Raccourcis:</strong> ←/→ Navigation • Espace Révéler • K Je connais • R À revoir • F Favori • P Prononcer • A Auto-play
                         </div>
+                    </div>
+                )}
+
+                {/* Mode Statistiques */}
+                {currentMode === 'stats' && stats && (
+                    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '0 20px' }}>
+                        <StatisticsDashboard stats={stats} />
                     </div>
                 )}
             </div>

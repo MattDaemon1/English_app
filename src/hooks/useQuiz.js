@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { getApiService } from '../services/ApiWordService.js';
 
-export const useQuiz = (selectedDifficulty) => {
+export const useQuiz = (selectedDifficulty, rewardActions = null) => {
     const [isQuizMode, setIsQuizMode] = useState(false);
     const [quizWords, setQuizWords] = useState([]);
     const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
@@ -10,6 +10,7 @@ export const useQuiz = (selectedDifficulty) => {
     const [answers, setAnswers] = useState([]);
     const [showResult, setShowResult] = useState(false);
     const [quizFinished, setQuizFinished] = useState(false);
+    const [questionStartTime, setQuestionStartTime] = useState(null);
 
     const wordService = getApiService();
     const currentQuizWord = quizWords[currentQuizIndex];
@@ -33,6 +34,7 @@ export const useQuiz = (selectedDifficulty) => {
             setShowResult(false);
             setQuizFinished(false);
             setSelectedAnswer(null);
+            setQuestionStartTime(Date.now()); // Démarrer le chrono pour la première question
         } catch (error) {
             console.error('Erreur lors de la génération du quiz:', error);
         }
@@ -43,19 +45,30 @@ export const useQuiz = (selectedDifficulty) => {
     };
 
     const submitAnswer = () => {
+        const responseTime = questionStartTime ? Date.now() - questionStartTime : null;
         const isCorrect = selectedAnswer === currentQuizWord.correctAnswer;
         const newAnswer = {
             questionIndex: currentQuizIndex,
             selectedAnswer: selectedAnswer,
             isCorrect: isCorrect,
             word: currentQuizWord.word,
-            correctTranslation: currentQuizWord.choices[currentQuizWord.correctAnswer]
+            correctTranslation: currentQuizWord.choices[currentQuizWord.correctAnswer],
+            responseTime: responseTime
         };
 
         setAnswers([...answers, newAnswer]);
 
         if (isCorrect) {
             setScore(score + 1);
+            // Récompenses pour bonne réponse au quiz
+            if (rewardActions) {
+                rewardActions.correctAnswer(responseTime);
+            }
+        } else {
+            // Gérer la mauvaise réponse (reset streak)
+            if (rewardActions) {
+                rewardActions.incorrectAnswer();
+            }
         }
 
         setShowResult(true);
@@ -66,7 +79,12 @@ export const useQuiz = (selectedDifficulty) => {
             setCurrentQuizIndex(currentQuizIndex + 1);
             setSelectedAnswer(null);
             setShowResult(false);
+            setQuestionStartTime(Date.now()); // Redémarrer le chrono pour la prochaine question
         } else {
+            // Quiz terminé - vérifier si quiz parfait
+            if (rewardActions && score === 10) {
+                rewardActions.perfectQuiz();
+            }
             setQuizFinished(true);
         }
     };
