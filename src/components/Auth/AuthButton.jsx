@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth.jsx';
+import { useResponsive } from '../../hooks/useResponsive.js';
 
 /**
  * 🔐 Bouton de Connexion/Déconnexion avec interface complète
  */
 const AuthButton = ({ variant = 'default', size = 'md', showUserInfo = true }) => {
     const { currentUser, isAuthenticated, login, logout, loading } = useAuth();
+    const { isMobile } = useResponsive();
     const [showLoginForm, setShowLoginForm] = useState(false);
     const [loginData, setLoginData] = useState({ username: '', password: '' });
     const [loginError, setLoginError] = useState('');
@@ -107,28 +109,41 @@ const AuthButton = ({ variant = 'default', size = 'md', showUserInfo = true }) =
         <div style={{ position: 'relative', display: 'inline-block' }}>
             {/* Bouton principal */}
             {isAuthenticated ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    {/* Informations utilisateur */}
+                <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: isMobile ? '6px' : '10px',
+                    flexDirection: isMobile ? 'column' : 'row'
+                }}>
+                    {/* Informations utilisateur responsive */}
                     {showUserInfo && (
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
-                            padding: '6px 12px',
+                            gap: isMobile ? '4px' : '8px',
+                            padding: isMobile ? '4px 8px' : '6px 12px',
                             backgroundColor: '#F3F4F6',
                             borderRadius: '6px',
-                            fontSize: '14px',
+                            fontSize: isMobile ? '12px' : '14px',
                             color: '#374151'
                         }}>
-                            <span style={{ color: '#10B981', fontSize: '16px' }}>👤</span>
-                            <span style={{ fontWeight: '500' }}>{currentUser?.username}</span>
+                            <span style={{ color: '#10B981', fontSize: isMobile ? '14px' : '16px' }}>👤</span>
+                            <span style={{ fontWeight: '500' }}>
+                                {isMobile ? 
+                                    (currentUser?.username?.length > 8 ? 
+                                        currentUser.username.substring(0, 8) + '...' : 
+                                        currentUser?.username
+                                    ) : 
+                                    currentUser?.username
+                                }
+                            </span>
                             {currentUser?.points && (
                                 <span style={{
                                     backgroundColor: '#DBEAFE',
                                     color: '#1D4ED8',
-                                    padding: '2px 6px',
+                                    padding: isMobile ? '1px 4px' : '2px 6px',
                                     borderRadius: '4px',
-                                    fontSize: '12px',
+                                    fontSize: isMobile ? '10px' : '12px',
                                     fontWeight: '600'
                                 }}>
                                     {currentUser.points} XP
@@ -192,19 +207,22 @@ const AuthButton = ({ variant = 'default', size = 'md', showUserInfo = true }) =
                 </button>
             )}
 
-            {/* Formulaire de connexion en popup */}
+            {/* Formulaire de connexion en popup responsive */}
             {showLoginForm && !isAuthenticated && (
                 <div style={{
-                    position: 'absolute',
-                    top: '100%',
-                    right: '0',
-                    marginTop: '8px',
+                    position: isMobile ? 'fixed' : 'absolute',
+                    top: isMobile ? '50%' : '100%',
+                    left: isMobile ? '50%' : 'auto',
+                    right: isMobile ? 'auto' : '0',
+                    transform: isMobile ? 'translate(-50%, -50%)' : 'none',
+                    marginTop: isMobile ? '0' : '8px',
                     backgroundColor: 'white',
                     border: '1px solid #D1D5DB',
                     borderRadius: '8px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                    padding: '20px',
-                    minWidth: '300px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                    padding: isMobile ? '24px' : '20px',
+                    minWidth: isMobile ? '90vw' : '300px',
+                    maxWidth: isMobile ? '400px' : 'none',
                     zIndex: 1000
                 }}>
                     <div style={{

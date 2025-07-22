@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth.jsx'
 import { useWords } from './hooks/useWords.js'
 import { useQuiz } from './hooks/useQuiz.js'
 import { useRewards } from './hooks/useRewards.js'
-import { LoginForm } from './components/Auth/LoginForm.jsx'
+import { useResponsive } from './hooks/useResponsive.js'
 import RewardNotification from './components/Rewards/RewardNotification.jsx'
 import LevelDisplay from './components/Rewards/LevelDisplay.jsx'
 import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
@@ -26,6 +26,7 @@ function AppContent() {
     const [favorites, setFavorites] = useState(new Set())
     const [answerStartTime, setAnswerStartTime] = useState(null)
     const { isAuthenticated } = useAuth()
+    const { isMobile, isTablet } = useResponsive()
 
     // Système de récompenses
     const { stats, notifications, actions, removeNotification } = useRewards()
@@ -278,15 +279,22 @@ function AppContent() {
                 />
             ))}
 
-            <div className="header-section" style={{ textAlign: 'center', marginBottom: '30px' }}>
-                {/* Bouton de connexion/déconnexion en haut à droite */}
+            <div className="header-section" style={{ textAlign: 'center', marginBottom: '30px', position: 'relative' }}>
+                {/* Bouton de connexion/déconnexion responsive */}
                 <div style={{
-                    position: 'absolute',
-                    top: '20px',
-                    right: '20px',
-                    zIndex: 100
+                    position: isMobile ? 'static' : 'absolute',
+                    top: isMobile ? 'auto' : '10px',
+                    right: isMobile ? 'auto' : '10px',
+                    zIndex: 100,
+                    marginBottom: isMobile ? '20px' : '0',
+                    display: 'flex',
+                    justifyContent: isMobile ? 'center' : 'flex-end'
                 }}>
-                    <AuthButton variant="default" size="md" showUserInfo={true} />
+                    <AuthButton 
+                        variant="default" 
+                        size={isMobile ? "sm" : isTablet ? "md" : "md"} 
+                        showUserInfo={!isMobile} 
+                    />
                 </div>
 
                 <div style={{ marginBottom: '20px' }}>
@@ -479,13 +487,6 @@ function AppContent() {
             )}
 
             <div className="content-section">
-                {!isAuthenticated && (
-                    <div>
-                        <p>Connectez-vous pour sauvegarder vos progrès :</p>
-                        <LoginForm theme={theme} />
-                    </div>
-                )}
-
                 {/* Mode Quiz */}
                 {currentMode === 'quiz' && isQuizMode && !quizFinished && currentQuizWord && (
                     <div className="quiz-section" style={{
