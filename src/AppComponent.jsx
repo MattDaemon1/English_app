@@ -391,16 +391,16 @@ function AppContent() {
                         color: '#1F2937',
                         fontWeight: 'bold'
                     }}>
-                        🎓 EnglishMaster
+                        🎓 EnglishMaster Pro
                     </h1>
                     <p className="app-subtitle" style={{
                         fontSize: '1.1rem',
                         color: '#6B7280',
                         margin: '0 0 15px 0'
                     }}>
-                        Application d'apprentissage de l'anglais
+                        Application d'apprentissage de l'anglais avec IA
                     </p>
-                    <Badge variant="premium" size="lg">Version 2.2.0 🏆</Badge>
+                    <Badge variant="premium" size="lg">Version 2.3.0 🏆 Admin</Badge>
                 </div>
 
                 {/* Affichage du niveau utilisateur */}
