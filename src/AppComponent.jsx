@@ -147,7 +147,7 @@ function AppContent() {
             console.log('Speaking word:', currentDisplayWord.word) // Debug
 
             const utterance = new SpeechSynthesisUtterance(currentDisplayWord.word)
-            utterance.lang = 'en-US'
+            utterance.lang = 'fr'
             utterance.rate = 0.8
 
             utterance.onstart = () => console.log('Speech started') // Debug
