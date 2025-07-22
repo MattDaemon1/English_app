@@ -9,6 +9,7 @@ import { LoginForm } from './components/Auth/LoginForm.jsx'
 import RewardNotification from './components/Rewards/RewardNotification.jsx'
 import LevelDisplay from './components/Rewards/LevelDisplay.jsx'
 import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
+import DebugPanel from './components/Debug/DebugPanel.jsx'
 import './App.css'
 
 function AppContent() {
@@ -52,11 +53,13 @@ function AppContent() {
 
     // Effet pour mélanger les mots quand ils changent
     useEffect(() => {
+        console.log('Words loaded:', allWords?.length, 'words') // Debug
         if (allWords && allWords.length > 0) {
             const shuffled = shuffleArray(allWords)
             setShuffledWords(shuffled)
             setWordIndex(0)
             setShowTranslation(false)
+            console.log('Shuffled words set:', shuffled.length) // Debug
         }
     }, [allWords, selectedDifficulty])
 
@@ -67,7 +70,8 @@ function AppContent() {
             interval = setInterval(() => {
                 setShowTranslation(prev => {
                     if (prev) {
-                        nextWord()
+                        // Utiliser la forme callback pour éviter les closures stales
+                        setWordIndex(prevIndex => (prevIndex + 1) % shuffledWords.length)
                         return false
                     } else {
                         return true
@@ -76,20 +80,28 @@ function AppContent() {
             }, autoPlaySpeed)
         }
         return () => clearInterval(interval)
-    }, [isAutoPlay, autoPlaySpeed, shuffledWords])
+    }, [isAutoPlay, autoPlaySpeed, shuffledWords.length]) // Utiliser .length pour éviter la re-création constante
 
     // Fonctions pour les flashcards améliorées
     const nextWord = () => {
+        console.log('NextWord called, current index:', wordIndex, 'total words:', shuffledWords?.length) // Debug
         if (shuffledWords && shuffledWords.length > 0) {
-            setWordIndex((prev) => (prev + 1) % shuffledWords.length)
+            const newIndex = (wordIndex + 1) % shuffledWords.length
+            console.log('Moving to index:', newIndex) // Debug
+            setWordIndex(newIndex)
             setShowTranslation(false)
+            setAnswerStartTime(null) // Reset timer
         }
     }
 
     const previousWord = () => {
+        console.log('PreviousWord called, current index:', wordIndex) // Debug
         if (shuffledWords && shuffledWords.length > 0) {
-            setWordIndex((prev) => (prev - 1 + shuffledWords.length) % shuffledWords.length)
+            const newIndex = (wordIndex - 1 + shuffledWords.length) % shuffledWords.length
+            console.log('Moving to index:', newIndex) // Debug
+            setWordIndex(newIndex)
             setShowTranslation(false)
+            setAnswerStartTime(null) // Reset timer
         }
     }
 
@@ -113,15 +125,23 @@ function AppContent() {
     const speakWord = () => {
         const currentDisplayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : null
         if (currentDisplayWord && 'speechSynthesis' in window) {
+            console.log('Speaking word:', currentDisplayWord.word) // Debug
+
             const utterance = new SpeechSynthesisUtterance(currentDisplayWord.word)
             utterance.lang = 'en-US'
             utterance.rate = 0.8
+
+            utterance.onstart = () => console.log('Speech started') // Debug
+            utterance.onerror = (event) => console.error('Speech error:', event.error) // Debug
+
             speechSynthesis.speak(utterance)
 
             // Récompense pour écoute de prononciation
             if (actions) {
                 actions.pronunciationListened()
             }
+        } else {
+            console.error('Speech synthesis not available or no word to speak') // Debug
         }
     }
 
@@ -389,7 +409,11 @@ function AppContent() {
                         </select>
 
                         <button
-                            onClick={() => setIsAutoPlay(!isAutoPlay)}
+                            onClick={() => {
+                                const newAutoPlay = !isAutoPlay
+                                console.log('Auto-play toggled:', newAutoPlay) // Debug
+                                setIsAutoPlay(newAutoPlay)
+                            }}
                             style={{
                                 marginLeft: '10px',
                                 padding: '8px 15px',
@@ -851,6 +875,18 @@ function AppContent() {
                         <StatisticsDashboard stats={stats} />
                     </div>
                 )}
+
+                {/* Debug Panel - Temporaire */}
+                <DebugPanel
+                    allWords={allWords}
+                    shuffledWords={shuffledWords}
+                    wordIndex={wordIndex}
+                    currentWord={currentWord}
+                    displayWord={displayWord}
+                    loading={loading}
+                    isAutoPlay={isAutoPlay}
+                    showTranslation={showTranslation}
+                />
             </div>
         </div>
     )

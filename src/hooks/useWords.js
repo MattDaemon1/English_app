@@ -64,6 +64,7 @@ export const useWords = (selectedDifficulty, mode) => {
 
     return {
         words,
+        allWords: words, // Alias pour compatibilité
         currentWord,
         currentWordIndex,
         loading,
