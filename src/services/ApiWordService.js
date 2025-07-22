@@ -1,7 +1,10 @@
 // Service pour communiquer avec l'API backend
 class ApiWordService {
     constructor() {
-        this.baseUrl = 'http://localhost:3001/api';
+        // Utiliser l'URL relative en production, localhost en développement
+        this.baseUrl = process.env.NODE_ENV === 'production'
+            ? '/api'
+            : 'http://localhost:3001/api';
     }
 
     // === MÉTHODES POUR LES MOTS ===

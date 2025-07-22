@@ -1,14 +1,24 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { getDatabase } from './src/database/database.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 const db = getDatabase();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Servir les fichiers statiques en production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, 'dist')));
+}
 
 // Routes API
 
@@ -222,6 +232,13 @@ app.use((err, req, res, next) => {
         error: 'Erreur interne du serveur'
     });
 });
+
+// Servir l'app React pour toutes les autres routes (en production)
+if (process.env.NODE_ENV === 'production') {
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    });
+}
 
 // === DÉMARRAGE DU SERVEUR ===
 
