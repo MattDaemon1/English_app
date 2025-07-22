@@ -320,8 +320,11 @@ function AppContent() {
             />
 
             {/* Dashboard Admin */}
-            {showAdminDashboard && (
-                <AdminDashboard onClose={() => setShowAdminDashboard(false)} />
+            {(showAdminDashboard || true) && ( // TEMPORAIRE: forcer true pour tester
+                <div>
+                    {console.log('🔍 Rendu AdminDashboard - showAdminDashboard:', showAdminDashboard)}
+                    <AdminDashboard onClose={() => setShowAdminDashboard(false)} />
+                </div>
             )}
 
             {/* Anciennes notifications de récompenses (gardées pour compatibilité) */}
@@ -363,7 +366,9 @@ function AppContent() {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 console.log('🔴 Bouton dashboard cliqué !');
+                                console.log('🔍 showAdminDashboard AVANT:', showAdminDashboard);
                                 setShowAdminDashboard(true);
+                                console.log('🔍 setShowAdminDashboard(true) appelé');
                             }}
                             style={{
                                 padding: isMobile ? '8px 12px' : '10px 16px',

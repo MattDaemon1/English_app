@@ -10,8 +10,15 @@ const AdminDashboard = ({ onClose }) => {
     const [analytics, setAnalytics] = useState({})
     const [loading, setLoading] = useState(false)
 
-    // Si pas admin, ne pas afficher
-    if (!isAdmin) return null
+    // Debug du dashboard admin
+    console.log('🔍 AdminDashboard - isAdmin:', isAdmin)
+    console.log('🔍 AdminDashboard - canManageUsers:', canManageUsers)
+
+    // Si pas admin, ne pas afficher (temporairement désactivé pour debug)
+    if (!isAdmin && process.env.NODE_ENV !== 'development') {
+        console.log('🔍 AdminDashboard - Not admin, returning null')
+        return null
+    }
 
     // Simulation de chargement des utilisateurs
     const loadUsers = async () => {
