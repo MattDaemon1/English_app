@@ -9,7 +9,6 @@ import { LoginForm } from './components/Auth/LoginForm.jsx'
 import RewardNotification from './components/Rewards/RewardNotification.jsx'
 import LevelDisplay from './components/Rewards/LevelDisplay.jsx'
 import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
-import DebugPanel from './components/Debug/DebugPanel.jsx'
 import './App.css'
 
 function AppContent() {
@@ -907,17 +906,6 @@ function AppContent() {
                         <StatisticsDashboard stats={stats} />
                     </div>
                 )}
-
-                {/* Debug Panel - Temporaire */}
-                <DebugPanel
-                    allWords={allWords}
-                    shuffledWords={shuffledWords}
-                    wordIndex={wordIndex}
-                    displayWord={displayWord}
-                    loading={loading}
-                    isAutoPlay={isAutoPlay}
-                    showTranslation={showTranslation}
-                />
             </div>
         </div>
     )
