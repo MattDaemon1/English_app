@@ -17,9 +17,9 @@ export const useResponsive = () => {
         const handleResize = () => {
             const width = window.innerWidth;
             const height = window.innerHeight;
-            
+
             setScreenSize({ width, height });
-            
+
             // Définir les breakpoints
             setIsMobile(width <= 768);
             setIsTablet(width > 768 && width <= 1024);
@@ -28,7 +28,7 @@ export const useResponsive = () => {
 
         // Écouter les changements de taille
         window.addEventListener('resize', handleResize);
-        
+
         // Initialiser
         handleResize();
 

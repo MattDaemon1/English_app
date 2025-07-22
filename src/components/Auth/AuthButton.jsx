@@ -109,9 +109,9 @@ const AuthButton = ({ variant = 'default', size = 'md', showUserInfo = true }) =
         <div style={{ position: 'relative', display: 'inline-block' }}>
             {/* Bouton principal */}
             {isAuthenticated ? (
-                <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
                     gap: isMobile ? '6px' : '10px',
                     flexDirection: isMobile ? 'column' : 'row'
                 }}>
@@ -129,11 +129,11 @@ const AuthButton = ({ variant = 'default', size = 'md', showUserInfo = true }) =
                         }}>
                             <span style={{ color: '#10B981', fontSize: isMobile ? '14px' : '16px' }}>👤</span>
                             <span style={{ fontWeight: '500' }}>
-                                {isMobile ? 
-                                    (currentUser?.username?.length > 8 ? 
-                                        currentUser.username.substring(0, 8) + '...' : 
+                                {isMobile ?
+                                    (currentUser?.username?.length > 8 ?
+                                        currentUser.username.substring(0, 8) + '...' :
                                         currentUser?.username
-                                    ) : 
+                                    ) :
                                     currentUser?.username
                                 }
                             </span>

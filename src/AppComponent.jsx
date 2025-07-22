@@ -290,10 +290,10 @@ function AppContent() {
                     display: 'flex',
                     justifyContent: isMobile ? 'center' : 'flex-end'
                 }}>
-                    <AuthButton 
-                        variant="default" 
-                        size={isMobile ? "sm" : isTablet ? "md" : "md"} 
-                        showUserInfo={!isMobile} 
+                    <AuthButton
+                        variant="default"
+                        size={isMobile ? "sm" : isTablet ? "md" : "md"}
+                        showUserInfo={!isMobile}
                     />
                 </div>
 
