@@ -321,9 +321,49 @@ function AppContent() {
 
             {/* Dashboard Admin */}
             {(showAdminDashboard || true) && ( // TEMPORAIRE: forcer true pour tester
-                <div>
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    zIndex: 9999,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
                     {console.log('🔍 Rendu AdminDashboard - showAdminDashboard:', showAdminDashboard)}
-                    <AdminDashboard onClose={() => setShowAdminDashboard(false)} />
+                    <div style={{
+                        backgroundColor: 'white',
+                        padding: '20px',
+                        borderRadius: '12px',
+                        boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
+                        maxWidth: '90%',
+                        maxHeight: '90%',
+                        overflow: 'auto'
+                    }}>
+                        <h2 style={{ color: '#7C3AED', marginBottom: '20px' }}>
+                            🛡️ Test Dashboard Admin
+                        </h2>
+                        <p>Si vous voyez ce message, c'est que le rendu fonctionne !</p>
+                        <button 
+                            onClick={() => setShowAdminDashboard(false)}
+                            style={{
+                                marginTop: '20px',
+                                padding: '10px 20px',
+                                backgroundColor: '#EF4444',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            ❌ Fermer
+                        </button>
+                        {/* Composant AdminDashboard original */}
+                        <AdminDashboard onClose={() => setShowAdminDashboard(false)} />
+                    </div>
                 </div>
             )}
 
