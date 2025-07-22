@@ -42,3 +42,6 @@ coverage/
 
 # SQLite databases (keep for local dev, but exclude from production)
 # *.db
+
+# Vite cache
+.vite/
