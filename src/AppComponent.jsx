@@ -205,6 +205,18 @@ function AppContent() {
         const handleKeyPress = (event) => {
             if (currentMode !== 'flashcards') return
 
+            // Vérifier si l'utilisateur est en train de taper dans un champ de saisie
+            const activeElement = document.activeElement
+            const isInputFocused = activeElement && (
+                activeElement.tagName === 'INPUT' ||
+                activeElement.tagName === 'TEXTAREA' ||
+                activeElement.tagName === 'SELECT' ||
+                activeElement.isContentEditable
+            )
+
+            // Ne pas activer les raccourcis si un champ de saisie est en focus
+            if (isInputFocused) return
+
             switch (event.key) {
                 case 'ArrowLeft':
                 case 'h':
