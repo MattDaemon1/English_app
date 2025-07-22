@@ -14,6 +14,7 @@ import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
 import AuthButton from './components/Auth/AuthButton.jsx'
 import NotificationSystem from './components/Notifications/NotificationSystem.jsx'
 import AdminDashboard from './components/Admin/AdminDashboard.jsx'
+import AdminCredentials from './components/Admin/AdminCredentials.jsx'
 import './App.css'
 
 function AppContent() {
@@ -30,7 +31,7 @@ function AppContent() {
     const [favorites, setFavorites] = useState(new Set())
     const [answerStartTime, setAnswerStartTime] = useState(null)
     const [showAdminDashboard, setShowAdminDashboard] = useState(false)
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, user } = useAuth()
     const { isMobile, isTablet } = useResponsive()
     const { isAdmin } = useAdmin()
 
@@ -349,10 +350,21 @@ function AppContent() {
                         size={isMobile ? "sm" : isTablet ? "md" : "md"}
                         showUserInfo={!isMobile}
                     />
+                    {/* DEBUG Admin Status */}
+                    <div style={{ fontSize: '10px', color: '#666', margin: '5px 0' }}>
+                        DEBUG: isAuth: {isAuthenticated ? '✓' : '✗'} | isAdmin: {isAdmin ? '✓' : '✗'}
+                        {user && ` | User: ${user.username || user.email}`}
+                    </div>
+
                     {/* Bouton Dashboard Admin */}
-                    {isAdmin && (
+                    {(isAdmin || true) && ( // TEMPORAIRE: forcer l'affichage pour debug
                         <button
-                            onClick={() => setShowAdminDashboard(true)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log('🔴 Bouton dashboard cliqué !');
+                                setShowAdminDashboard(true);
+                            }}
                             style={{
                                 padding: isMobile ? '8px 12px' : '10px 16px',
                                 backgroundColor: '#7C3AED',
@@ -366,7 +378,9 @@ function AppContent() {
                                 alignItems: 'center',
                                 gap: '6px',
                                 transition: 'all 0.2s ease',
-                                boxShadow: '0 2px 4px rgba(124, 58, 237, 0.2)'
+                                boxShadow: '0 2px 4px rgba(124, 58, 237, 0.2)',
+                                zIndex: '999',
+                                position: 'relative'
                             }}
                             onMouseEnter={(e) => {
                                 e.target.style.backgroundColor = '#6D28D9'
@@ -1022,6 +1036,11 @@ function AppContent() {
                     </div>
                 )}
             </div>
+
+            {/* Affichage des identifiants admin en développement */}
+            {(process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost' || !isAuthenticated) && (
+                <AdminCredentials />
+            )}
         </div>
     )
 }

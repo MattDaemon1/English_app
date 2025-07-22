@@ -430,7 +430,9 @@ export class UserService {
 
         // Si aucun admin n'existe, créer l'admin par défaut
         const hasAdmin = users.some(user => user.role === 'admin');
+        const hasPersonalAdmin = users.some(user => user.email === 'matt4daemon@gmail.com');
 
+        // Créer l'admin par défaut si nécessaire
         if (!hasAdmin) {
             const defaultAdmin = {
                 id: 'admin_default',
@@ -464,10 +466,52 @@ export class UserService {
             };
 
             users.push(defaultAdmin);
+        }
+
+        // Créer le compte admin personnel si nécessaire
+        if (!hasPersonalAdmin) {
+            const personalAdmin = {
+                id: 'admin_personal',
+                username: 'matt4daemon',
+                email: 'matt4daemon@gmail.com',
+                password: this.hashPassword('admin123'), // Même mot de passe
+                role: 'super_admin', // Super admin
+                isAdmin: true,
+                profile: {
+                    firstName: 'Matt',
+                    lastName: 'Daemon',
+                    avatar: this.generateAvatar('Matt'),
+                    level: 'advanced',
+                    preferredTheme: 'classic',
+                    language: 'fr'
+                },
+                stats: {
+                    wordsLearned: 0,
+                    totalPoints: 0,
+                    streakDays: 0,
+                    lastConnectionDate: new Date().toISOString().split('T')[0],
+                    totalSessions: 0,
+                    badges: ['admin', 'founder', 'developer']
+                },
+                settings: {
+                    notifications: true,
+                    autoPlaySound: true,
+                    dailyGoal: 50
+                },
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            users.push(personalAdmin);
+        }
+
+        // Sauvegarder si des admins ont été créés
+        if (!hasAdmin || !hasPersonalAdmin) {
             this.saveAllUsers(users);
 
-            console.log('👑 Administrateur par défaut créé:');
-            console.log('Username: admin');
+            console.log('👑 Comptes administrateur créés:');
+            console.log('Admin par défaut - Username: admin, Email: admin@englishmaster.com');
+            console.log('Admin personnel - Username: matt4daemon, Email: matt4daemon@gmail.com');
             console.log('Password: admin123');
             console.log('Veuillez changer le mot de passe après la première connexion.');
         }
