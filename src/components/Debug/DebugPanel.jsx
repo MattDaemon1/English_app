@@ -8,7 +8,6 @@ const DebugPanel = ({
     allWords,
     shuffledWords,
     wordIndex,
-    currentWord,
     displayWord,
     loading,
     isAutoPlay,

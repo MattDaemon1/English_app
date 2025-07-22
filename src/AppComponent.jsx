@@ -913,7 +913,6 @@ function AppContent() {
                     allWords={allWords}
                     shuffledWords={shuffledWords}
                     wordIndex={wordIndex}
-                    currentWord={currentWord}
                     displayWord={displayWord}
                     loading={loading}
                     isAutoPlay={isAutoPlay}
