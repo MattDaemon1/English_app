@@ -320,7 +320,7 @@ function AppContent() {
             />
 
             {/* Dashboard Admin */}
-            {(showAdminDashboard || true) && ( // TEMPORAIRE: forcer true pour tester
+            {showAdminDashboard && (
                 <div style={{
                     position: 'fixed',
                     top: 0,
@@ -332,8 +332,7 @@ function AppContent() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
-                }}>
-                    {console.log('🔍 Rendu AdminDashboard - showAdminDashboard:', showAdminDashboard)}
+                }} onClick={() => setShowAdminDashboard(false)}>
                     <div style={{
                         backgroundColor: 'white',
                         padding: '20px',
@@ -342,26 +341,7 @@ function AppContent() {
                         maxWidth: '90%',
                         maxHeight: '90%',
                         overflow: 'auto'
-                    }}>
-                        <h2 style={{ color: '#7C3AED', marginBottom: '20px' }}>
-                            🛡️ Test Dashboard Admin
-                        </h2>
-                        <p>Si vous voyez ce message, c'est que le rendu fonctionne !</p>
-                        <button 
-                            onClick={() => setShowAdminDashboard(false)}
-                            style={{
-                                marginTop: '20px',
-                                padding: '10px 20px',
-                                backgroundColor: '#EF4444',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '8px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            ❌ Fermer
-                        </button>
-                        {/* Composant AdminDashboard original */}
+                    }} onClick={(e) => e.stopPropagation()}>
                         <AdminDashboard onClose={() => setShowAdminDashboard(false)} />
                     </div>
                 </div>
@@ -400,16 +380,9 @@ function AppContent() {
                     </div>
 
                     {/* Bouton Dashboard Admin */}
-                    {(isAdmin || true) && ( // TEMPORAIRE: forcer l'affichage pour debug
+                    {isAdmin && (
                         <button
-                            onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('🔴 Bouton dashboard cliqué !');
-                                console.log('🔍 showAdminDashboard AVANT:', showAdminDashboard);
-                                setShowAdminDashboard(true);
-                                console.log('🔍 setShowAdminDashboard(true) appelé');
-                            }}
+                            onClick={() => setShowAdminDashboard(true)}
                             style={{
                                 padding: isMobile ? '8px 12px' : '10px 16px',
                                 backgroundColor: '#7C3AED',
@@ -423,9 +396,7 @@ function AppContent() {
                                 alignItems: 'center',
                                 gap: '6px',
                                 transition: 'all 0.2s ease',
-                                boxShadow: '0 2px 4px rgba(124, 58, 237, 0.2)',
-                                zIndex: '999',
-                                position: 'relative'
+                                boxShadow: '0 2px 4px rgba(124, 58, 237, 0.2)'
                             }}
                             onMouseEnter={(e) => {
                                 e.target.style.backgroundColor = '#6D28D9'
