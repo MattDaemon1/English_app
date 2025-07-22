@@ -9,6 +9,7 @@ import { LoginForm } from './components/Auth/LoginForm.jsx'
 import RewardNotification from './components/Rewards/RewardNotification.jsx'
 import LevelDisplay from './components/Rewards/LevelDisplay.jsx'
 import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
+import AuthButton from './components/Auth/AuthButton.jsx'
 import './App.css'
 
 function AppContent() {
@@ -24,7 +25,7 @@ function AppContent() {
     const [autoPlaySpeed, setAutoPlaySpeed] = useState(3000)
     const [favorites, setFavorites] = useState(new Set())
     const [answerStartTime, setAnswerStartTime] = useState(null)
-    const { currentUser, isAuthenticated } = useAuth()
+    const { isAuthenticated } = useAuth()
 
     // Système de récompenses
     const { stats, notifications, actions, removeNotification } = useRewards()
@@ -267,7 +268,7 @@ function AppContent() {
     } = useQuiz(selectedDifficulty, actions)
 
     return (
-        <div className="app-container">
+        <div className="app-container" style={{ position: 'relative' }}>
             {/* Notifications de récompenses */}
             {notifications.map(notification => (
                 <RewardNotification
@@ -278,6 +279,16 @@ function AppContent() {
             ))}
 
             <div className="header-section" style={{ textAlign: 'center', marginBottom: '30px' }}>
+                {/* Bouton de connexion/déconnexion en haut à droite */}
+                <div style={{
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    zIndex: 100
+                }}>
+                    <AuthButton variant="default" size="md" showUserInfo={true} />
+                </div>
+
                 <div style={{ marginBottom: '20px' }}>
                     <h1 className="app-title" style={{
                         fontSize: '2.5rem',
@@ -311,8 +322,6 @@ function AppContent() {
                     gap: '8px',
                     marginBottom: '15px'
                 }}>
-                    {isAuthenticated && <Badge variant="success">Connecté: {currentUser?.username}</Badge>}
-                    {!isAuthenticated && <Badge variant="info">Mode Invité</Badge>}
                     <Badge variant="info">Mots: {totalWords}</Badge>
                     {loading && <Badge variant="warning">Chargement...</Badge>}
                     {isQuizMode && <Badge variant="warning">Quiz: {quizScore}/10</Badge>}
