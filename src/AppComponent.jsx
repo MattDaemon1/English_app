@@ -6,10 +6,12 @@ import { useWords } from './hooks/useWords.js'
 import { useQuiz } from './hooks/useQuiz.js'
 import { useRewards } from './hooks/useRewards.js'
 import { useResponsive } from './hooks/useResponsive.js'
+import useNotifications from './hooks/useNotifications.js'
 import RewardNotification from './components/Rewards/RewardNotification.jsx'
 import LevelDisplay from './components/Rewards/LevelDisplay.jsx'
 import StatisticsDashboard from './components/Rewards/StatisticsDashboard.jsx'
 import AuthButton from './components/Auth/AuthButton.jsx'
+import NotificationSystem from './components/Notifications/NotificationSystem.jsx'
 import './App.css'
 
 function AppContent() {
@@ -30,6 +32,9 @@ function AppContent() {
 
     // Système de récompenses
     const { stats, notifications, actions, removeNotification } = useRewards()
+
+    // Système de notifications modernes
+    const notificationSystem = useNotifications()
 
     // Récupération du thème
     const theme = themes[selectedTheme] || themes.classic
@@ -112,8 +117,16 @@ function AppContent() {
             const newFavorites = new Set(favorites)
             if (favorites.has(currentDisplayWord.word)) {
                 newFavorites.delete(currentDisplayWord.word)
+                notificationSystem.info(
+                    'Favori retiré',
+                    `"${currentDisplayWord.word}" retiré des favoris`
+                )
             } else {
                 newFavorites.add(currentDisplayWord.word)
+                notificationSystem.success(
+                    'Favori ajouté !',
+                    `"${currentDisplayWord.word}" ajouté aux favoris ❤️`
+                )
                 // Récompense pour ajout aux favoris
                 if (actions) {
                     actions.favoriteAdded()
@@ -162,6 +175,12 @@ function AppContent() {
             setKnownWords(prev => new Set([...prev, currentDisplayWord.word]))
             setStudySession(prev => ({ ...prev, studied: prev.studied + 1, correct: prev.correct + 1 }))
 
+            // Notification de succès
+            notificationSystem.success(
+                'Mot maîtrisé ! 🎉',
+                `Excellent ! "${currentDisplayWord.word}" ajouté aux mots connus`
+            )
+
             // Récompenses pour mot maîtrisé
             if (actions) {
                 actions.wordLearned()
@@ -190,6 +209,13 @@ function AppContent() {
         setKnownWords(new Set())
         setWordIndex(0)
         setShowTranslation(false)
+
+        // Notification de reset
+        notificationSystem.info(
+            'Session réinitialisée',
+            'Nouvelle session d\'apprentissage commencée ! 🚀'
+        )
+
         // Remélanger les mots
         if (allWords && allWords.length > 0) {
             const shuffled = shuffleArray(allWords)
@@ -282,7 +308,13 @@ function AppContent() {
 
     return (
         <div className="app-container" style={{ position: 'relative' }}>
-            {/* Notifications de récompenses */}
+            {/* Système de notifications moderne */}
+            <NotificationSystem
+                notifications={notificationSystem.notifications}
+                onRemove={notificationSystem.removeNotification}
+            />
+
+            {/* Anciennes notifications de récompenses (gardées pour compatibilité) */}
             {notifications.map(notification => (
                 <RewardNotification
                     key={notification.id}
@@ -352,15 +384,6 @@ function AppContent() {
                         <Badge variant="info">❤️ Favoris: {favorites.size}</Badge>
                     )}
                 </div>
-
-                <p style={{
-                    fontSize: '0.9rem',
-                    color: '#059669',
-                    margin: '0',
-                    fontWeight: '500'
-                }}>
-                    ✅ Base + CSS + Badge + Auth + Words + LoginForm + Quiz + Auto-Play 🎯
-                </p>
             </div>
 
             {/* Sélecteur de mode */}
@@ -441,6 +464,19 @@ function AppContent() {
                                 const newAutoPlay = !isAutoPlay
                                 console.log('Auto-play toggled:', newAutoPlay) // Debug
                                 setIsAutoPlay(newAutoPlay)
+
+                                // Notification pour auto-play
+                                if (newAutoPlay) {
+                                    notificationSystem.info(
+                                        'Auto-play activé ▶️',
+                                        'Les flashcards défilent automatiquement'
+                                    )
+                                } else {
+                                    notificationSystem.info(
+                                        'Auto-play désactivé ⏸️',
+                                        'Contrôle manuel restauré'
+                                    )
+                                }
                             }}
                             style={{
                                 marginLeft: '10px',
