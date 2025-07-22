@@ -197,7 +197,7 @@ function AppContent() {
     }
 
     // Mot actuel basé sur l'index des mots mélangés
-    const displayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : currentWord
+    const displayWord = shuffledWords && shuffledWords.length > 0 ? shuffledWords[wordIndex] : null
 
     // Raccourcis clavier pour les flashcards
     useEffect(() => {
@@ -601,7 +601,37 @@ function AppContent() {
                 )}
 
                 {/* Mode Flashcards */}
-                {currentMode === 'flashcards' && displayWord && (
+                {currentMode === 'flashcards' && (
+                    <>
+                        {loading && (
+                            <div style={{ textAlign: 'center', padding: '40px' }}>
+                                <div style={{ fontSize: '48px', marginBottom: '20px' }}>⏳</div>
+                                <h3>Chargement des mots...</h3>
+                            </div>
+                        )}
+                        
+                        {!loading && (!shuffledWords || shuffledWords.length === 0) && (
+                            <div style={{ textAlign: 'center', padding: '40px' }}>
+                                <div style={{ fontSize: '48px', marginBottom: '20px' }}>❌</div>
+                                <h3>Aucun mot disponible</h3>
+                                <p>Vérifiez votre connexion ou essayez une autre difficulté.</p>
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    style={{
+                                        padding: '10px 20px',
+                                        backgroundColor: '#2563EB',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    🔄 Recharger
+                                </button>
+                            </div>
+                        )}
+                        
+                        {!loading && displayWord && (
                     <div className="flashcard-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                         {/* Carte principale */}
                         <div
@@ -867,6 +897,8 @@ function AppContent() {
                             <strong>⌨️ Raccourcis:</strong> ←/→ Navigation • Espace Révéler • K Je connais • R À revoir • F Favori • P Prononcer • A Auto-play
                         </div>
                     </div>
+                        )}
+                    </>
                 )}
 
                 {/* Mode Statistiques */}
