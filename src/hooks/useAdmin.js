@@ -20,9 +20,9 @@ const useAdmin = () => {
     const ADMIN_ROLES = ['admin', 'super_admin', 'moderator']
 
     // Mode développement - forcer admin (à adapter selon les besoins)
-    const DEV_MODE = process.env.NODE_ENV === 'development' || 
-                    window.location.hostname === 'localhost' ||
-                    window.location.hostname.includes('heroku')
+    const DEV_MODE = process.env.NODE_ENV === 'development' ||
+        window.location.hostname === 'localhost' ||
+        window.location.hostname.includes('heroku')
     const FORCE_ADMIN_IN_DEV = true // Temporaire pour debug
 
     // Debug des informations utilisateur
