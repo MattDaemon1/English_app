@@ -373,11 +373,6 @@ function AppContent() {
                         size={isMobile ? "sm" : isTablet ? "md" : "md"}
                         showUserInfo={!isMobile}
                     />
-                    {/* DEBUG Admin Status */}
-                    <div style={{ fontSize: '10px', color: '#666', margin: '5px 0' }}>
-                        DEBUG: isAuth: {isAuthenticated ? '✓' : '✗'} | isAdmin: {isAdmin ? '✓' : '✗'}
-                        {user && ` | User: ${user.username || user.email}`}
-                    </div>
 
                     {/* Bouton Dashboard Admin */}
                     {isAdmin && (
@@ -832,44 +827,6 @@ function AppContent() {
                                     </button>
 
                                     {/* Bouton Son */}
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            speakWord()
-                                        }}
-                                        style={{
-                                            position: 'absolute',
-                                            top: '50px',
-                                            left: '15px',
-                                            background: 'none',
-                                            border: 'none',
-                                            fontSize: '20px',
-                                            cursor: 'pointer',
-                                            color: '#6B7280'
-                                        }}
-                                    >
-                                        🔊
-                                    </button>
-
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            toggleFavorite()
-                                        }}
-                                        style={{
-                                            position: 'absolute',
-                                            top: '10px',
-                                            left: '15px',
-                                            background: 'none',
-                                            border: 'none',
-                                            fontSize: '20px',
-                                            cursor: 'pointer',
-                                            color: favorites.has(displayWord.word) ? '#EF4444' : '#D1D5DB'
-                                        }}
-                                    >
-                                        ❤️
-                                    </button>
-
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation()
