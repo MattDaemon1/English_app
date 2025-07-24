@@ -376,7 +376,7 @@ function AppContent() {
 
                     {/* Bouton Dashboard Admin */}
                     {console.log('🔍 DEBUG - isAdmin:', isAdmin, 'isAuthenticated:', isAuthenticated, 'user:', user)}
-                    {(isAdmin || isAuthenticated) && ( // DEBUG: afficher si connecté
+                    {isAdmin && ( // Condition correcte : seulement pour les admins
                         <button
                             onClick={() => {
                                 console.log('🔴 Dashboard button clicked!')
@@ -384,7 +384,7 @@ function AppContent() {
                             }}
                             style={{
                                 padding: isMobile ? '8px 12px' : '10px 16px',
-                                backgroundColor: isAdmin ? '#7C3AED' : '#F59E0B', // Orange si pas admin
+                                backgroundColor: '#7C3AED', // Violet pour admin
                                 color: 'white',
                                 border: 'none',
                                 borderRadius: '8px',
@@ -398,17 +398,17 @@ function AppContent() {
                                 boxShadow: '0 2px 4px rgba(124, 58, 237, 0.2)'
                             }}
                             onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = isAdmin ? '#6D28D9' : '#D97706'
+                                e.target.style.backgroundColor = '#6D28D9'
                                 e.target.style.transform = 'translateY(-1px)'
                                 e.target.style.boxShadow = '0 4px 8px rgba(124, 58, 237, 0.3)'
                             }}
                             onMouseLeave={(e) => {
-                                e.target.style.backgroundColor = isAdmin ? '#7C3AED' : '#F59E0B'
+                                e.target.style.backgroundColor = '#7C3AED'
                                 e.target.style.transform = 'translateY(0)'
                                 e.target.style.boxShadow = '0 2px 4px rgba(124, 58, 237, 0.2)'
                             }}
                         >
-                            🛡️ {!isMobile && (isAdmin ? 'Dashboard' : 'Debug')}
+                            🛡️ {!isMobile && 'Dashboard'}
                         </button>
                     )}
                 </div>
