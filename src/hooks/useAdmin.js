@@ -35,15 +35,17 @@ const useAdmin = () => {
     console.log('🔍 DEBUG Admin - DEV_MODE:', DEV_MODE)
     console.log('🔍 DEBUG Admin - FORCE_ADMIN_IN_DEV:', FORCE_ADMIN_IN_DEV)
 
-    const isAdmin = isAuthenticated && user && (
-        ADMIN_EMAILS.includes(user.email?.toLowerCase()) ||
-        ADMIN_EMAILS.includes(user.username?.toLowerCase()) ||
-        user.username === 'admin' || // Compte admin par défaut
-        user.username === 'matt4daemon' || // Votre compte personnel
-        user.email === 'admin' || // Si connecté avec email "admin"
-        ADMIN_ROLES.includes(user.role?.toLowerCase()) ||
-        user.isAdmin === true ||
-        (DEV_MODE && FORCE_ADMIN_IN_DEV) // Force admin en développement
+    const isAdmin = isAuthenticated && (
+        (user && (
+            ADMIN_EMAILS.includes(user.email?.toLowerCase()) ||
+            ADMIN_EMAILS.includes(user.username?.toLowerCase()) ||
+            user.username === 'admin' || // Compte admin par défaut
+            user.username === 'matt4daemon' || // Votre compte personnel
+            user.email === 'admin' || // Si connecté avec email "admin"
+            ADMIN_ROLES.includes(user.role?.toLowerCase()) ||
+            user.isAdmin === true
+        )) ||
+        (DEV_MODE && FORCE_ADMIN_IN_DEV) // Force admin en développement (même sans user)
     )
 
     console.log('🔍 DEBUG Admin - isAdmin result:', isAdmin)
