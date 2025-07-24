@@ -56,7 +56,7 @@ const AdminDashboard = ({ onClose }) => {
     const handleUserAction = (userId, action) => {
         const user = users.find(u => u.id === userId)
         const userDisplayName = user.profile ? `${user.profile.firstName} ${user.profile.lastName}`.trim() || user.username : user.username
-        
+
         switch (action) {
             case 'suspend':
                 user.isActive = false
@@ -315,7 +315,7 @@ const AdminDashboard = ({ onClose }) => {
                                             {users.map(user => {
                                                 const userDisplayName = user.profile ? `${user.profile.firstName} ${user.profile.lastName}`.trim() || user.username : user.username
                                                 const isCurrentUserAdmin = user.role === 'admin' || user.role === 'super_admin'
-                                                
+
                                                 return (
                                                     <tr key={user.id} style={{ borderBottom: '1px solid #F3F4F6' }}>
                                                         <td style={{ padding: '12px' }}>
@@ -334,8 +334,8 @@ const AdminDashboard = ({ onClose }) => {
                                                                 backgroundColor: isCurrentUserAdmin ? '#FEF3C7' : '#E0E7FF',
                                                                 color: isCurrentUserAdmin ? '#92400E' : '#3730A3'
                                                             }}>
-                                                                {user.role === 'super_admin' ? '👑 Super Admin' : 
-                                                                 user.role === 'admin' ? '🛡️ Admin' : '👤 Utilisateur'}
+                                                                {user.role === 'super_admin' ? '👑 Super Admin' :
+                                                                    user.role === 'admin' ? '🛡️ Admin' : '👤 Utilisateur'}
                                                             </span>
                                                         </td>
                                                         <td style={{ padding: '12px', color: '#1F2937' }}>{user.stats?.wordsLearned || 0}</td>
@@ -538,14 +538,14 @@ const AdminDashboard = ({ onClose }) => {
                         maxWidth: '90%'
                     }} onClick={(e) => e.stopPropagation()}>
                         <h3 style={{ marginTop: 0, color: '#1F2937' }}>➕ Ajouter un utilisateur</h3>
-                        
+
                         <div style={{ display: 'grid', gap: '15px' }}>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Nom d'utilisateur *</label>
                                 <input
                                     type="text"
                                     value={newUser.username}
-                                    onChange={(e) => setNewUser({...newUser, username: e.target.value})}
+                                    onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
                                     style={{
                                         width: '100%',
                                         padding: '10px',
@@ -555,14 +555,14 @@ const AdminDashboard = ({ onClose }) => {
                                     placeholder="nom_utilisateur"
                                 />
                             </div>
-                            
+
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Prénom</label>
                                     <input
                                         type="text"
                                         value={newUser.firstName}
-                                        onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
+                                        onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
                                         style={{
                                             width: '100%',
                                             padding: '10px',
@@ -577,7 +577,7 @@ const AdminDashboard = ({ onClose }) => {
                                     <input
                                         type="text"
                                         value={newUser.lastName}
-                                        onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
+                                        onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
                                         style={{
                                             width: '100%',
                                             padding: '10px',
@@ -588,13 +588,13 @@ const AdminDashboard = ({ onClose }) => {
                                     />
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Email</label>
                                 <input
                                     type="email"
                                     value={newUser.email}
-                                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                                     style={{
                                         width: '100%',
                                         padding: '10px',
@@ -604,13 +604,13 @@ const AdminDashboard = ({ onClose }) => {
                                     placeholder="email@exemple.com"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Mot de passe *</label>
                                 <input
                                     type="password"
                                     value={newUser.password}
-                                    onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                                     style={{
                                         width: '100%',
                                         padding: '10px',
@@ -620,12 +620,12 @@ const AdminDashboard = ({ onClose }) => {
                                     placeholder="Mot de passe"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Rôle</label>
                                 <select
                                     value={newUser.role}
-                                    onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                                    onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                                     style={{
                                         width: '100%',
                                         padding: '10px',
@@ -638,7 +638,7 @@ const AdminDashboard = ({ onClose }) => {
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'flex-end' }}>
                             <button
                                 onClick={() => setShowAddUserModal(false)}
